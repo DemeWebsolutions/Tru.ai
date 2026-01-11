@@ -21,12 +21,13 @@ struct HistoryView: View {
                         VStack(alignment: .leading) {
                             Text(conversation.title)
                                 .font(.headline)
+                                .foregroundColor(Color.truAiText)
                             Text("\(conversation.messages.count) messages")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.truAiText.opacity(0.7))
                             Text(conversation.updatedAt, style: .relative)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.truAiText.opacity(0.7))
                         }
                     }
                 }
@@ -37,9 +38,11 @@ struct HistoryView: View {
                 }
             }
             .navigationTitle("History")
+            .background(Color.truAiDarkBackground)
             .toolbar {
                 Button(action: { viewModel.createNewConversation() }) {
                     Image(systemName: "plus")
+                        .foregroundColor(Color.truAiText)
                 }
             }
         }

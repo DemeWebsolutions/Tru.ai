@@ -20,26 +20,26 @@ struct TerminalView: View {
                     ForEach(output.indices, id: \.self) { index in
                         Text(output[index])
                             .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.truAiText)
                     }
                 }
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .background(Color.black)
+            .background(Color.truAiDarkBackground)
             
             // Command input
             HStack {
                 Text("$")
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.truAiText)
                 TextField("Enter command", text: $commandInput, onCommit: executeCommand)
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.truAiText)
                     .textFieldStyle(PlainTextFieldStyle())
             }
             .padding()
-            .background(Color.black)
+            .background(Color.truAiDarkBackground)
         }
     }
     

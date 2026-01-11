@@ -49,6 +49,7 @@ struct StatusBarView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 4)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(Color.truAiLightBackground)
+        .foregroundColor(Color.truAiText)
     }
 }

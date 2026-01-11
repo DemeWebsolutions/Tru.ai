@@ -18,13 +18,15 @@ struct AIPanelView: View {
                 Text("TRU.AI")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.truAiText.opacity(0.7))
                 Spacer()
                 Button(action: { viewModel.createNewConversation() }) {
                     Image(systemName: "plus")
+                        .foregroundColor(Color.truAiText)
                 }
             }
             .padding()
+            .background(Color.truAiLightBackground)
             
             // Chat messages
             ScrollView {
@@ -57,7 +59,8 @@ struct AIPanelView: View {
             }
             .padding()
         }
-        .background(Color(UIColor.systemBackground))
+        .background(Color.truAiDarkBackground)
+        .foregroundColor(Color.truAiText)
     }
 }
 
@@ -73,14 +76,14 @@ struct MessageBubble: View {
             VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 4) {
                 Text(message.content)
                     .padding(12)
-                    .background(message.role == .user ? Color.blue : Color(UIColor.secondarySystemBackground))
-                    .foregroundColor(message.role == .user ? .white : .primary)
+                    .background(message.role == .user ? Color.blue : Color.truAiMediumBackground)
+                    .foregroundColor(Color.truAiText)
                     .cornerRadius(12)
                 
                 if let model = message.model {
                     Text(model)
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.truAiText.opacity(0.7))
                 }
             }
             .frame(maxWidth: 300, alignment: message.role == .user ? .trailing : .leading)

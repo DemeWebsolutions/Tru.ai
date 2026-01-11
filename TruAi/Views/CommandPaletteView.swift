@@ -16,11 +16,13 @@ struct CommandPaletteView: View {
             // Search input
             HStack {
                 Image(systemName: "magnifyingglass")
+                    .foregroundColor(Color.truAiText)
                 TextField("Type a command", text: $viewModel.searchText)
                     .textFieldStyle(PlainTextFieldStyle())
+                    .foregroundColor(Color.truAiText)
             }
             .padding()
-            .background(Color(UIColor.secondarySystemBackground))
+            .background(Color.truAiLightBackground)
             
             // Command list
             ScrollView {
@@ -35,7 +37,7 @@ struct CommandPaletteView: View {
             .frame(maxHeight: 400)
         }
         .frame(width: 600)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.truAiDarkBackground)
         .cornerRadius(8)
         .shadow(radius: 20)
         .padding()
@@ -52,15 +54,16 @@ struct CommandRow: View {
                 VStack(alignment: .leading) {
                     Text(command.title)
                         .font(.system(size: 14))
+                        .foregroundColor(Color.truAiText)
                     Text(command.category.rawValue)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.truAiText.opacity(0.7))
                 }
                 Spacer()
                 if let shortcut = command.shortcut {
                     Text(shortcut)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.truAiText.opacity(0.7))
                 }
             }
             .padding()

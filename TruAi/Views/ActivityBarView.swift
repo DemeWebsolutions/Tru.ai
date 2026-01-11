@@ -59,7 +59,7 @@ struct ActivityBarView: View {
             )
         }
         .padding(.vertical, 16)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(Color.truAiMediumBackground)
     }
 }
 
@@ -72,7 +72,7 @@ struct ActivityBarButton: View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 24))
-                .foregroundColor(isSelected ? .blue : .gray)
+                .foregroundColor(isSelected ? .blue : Color.truAiText.opacity(0.7))
                 .frame(width: 48, height: 48)
         }
         .buttonStyle(PlainButtonStyle())

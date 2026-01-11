@@ -18,10 +18,11 @@ struct SearchPanelView: View {
                 Text("SEARCH")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.truAiText.opacity(0.7))
                 Spacer()
             }
             .padding()
+            .background(Color.truAiLightBackground)
             
             // Search input
             VStack(alignment: .leading, spacing: 8) {
@@ -70,11 +71,12 @@ struct SearchPanelView: View {
                 }
             } else {
                 Text("No results")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.truAiText.opacity(0.7))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(Color.truAiDarkBackground)
+        .foregroundColor(Color.truAiText)
     }
 }
 

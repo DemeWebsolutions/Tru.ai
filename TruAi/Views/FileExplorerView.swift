@@ -19,16 +19,19 @@ struct FileExplorerView: View {
                 Text("EXPLORER")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.truAiText.opacity(0.7))
                 Spacer()
                 Button(action: {}) {
                     Image(systemName: "plus")
+                        .foregroundColor(Color.truAiText)
                 }
                 Button(action: {}) {
                     Image(systemName: "folder.badge.plus")
+                        .foregroundColor(Color.truAiText)
                 }
             }
             .padding()
+            .background(Color.truAiLightBackground)
             
             // Search
             TextField("Search files", text: $viewModel.searchText)
@@ -50,7 +53,7 @@ struct FileExplorerView: View {
                 .padding()
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(Color.truAiDarkBackground)
     }
 }
 
@@ -70,9 +73,10 @@ struct FileItemRow: View {
         }) {
             HStack(spacing: 4) {
                 Image(systemName: file.icon)
-                    .foregroundColor(file.isDirectory ? .blue : .primary)
+                    .foregroundColor(file.isDirectory ? .blue : Color.truAiText)
                 Text(file.name)
                     .font(.system(size: 14))
+                    .foregroundColor(Color.truAiText)
                 Spacer()
             }
             .padding(.leading, CGFloat(level * 20))

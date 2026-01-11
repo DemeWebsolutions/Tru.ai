@@ -27,6 +27,8 @@ struct CodeEditorView: View {
                         set: { viewModel.updateContent($0) }
                     ))
                     .font(.system(size: viewModel.fontSize, design: .monospaced))
+                    .foregroundColor(Color.truAiText)
+                    .background(Color.truAiDarkBackground)
                     .padding(8)
                 }
             } else {
@@ -35,12 +37,14 @@ struct CodeEditorView: View {
                     Spacer()
                     Text("Tru.ai")
                         .font(.system(size: 48, weight: .bold))
+                        .foregroundColor(Color.truAiText)
                     Text("iOS IDE Framework")
                         .font(.headline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.truAiText.opacity(0.7))
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.truAiDarkBackground)
             }
         }
     }
@@ -57,13 +61,13 @@ struct LineNumbersView: View {
                 ForEach(1...max(1, lines.count), id: \.self) { lineNumber in
                     Text("\(lineNumber)")
                         .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.truAiText.opacity(0.6))
                         .padding(.vertical, 2)
                 }
             }
             .padding(8)
         }
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(Color.truAiMediumBackground)
     }
 }
 
@@ -86,7 +90,7 @@ struct TabBarView: View {
             }
         }
         .frame(height: 40)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(Color.truAiLightBackground)
     }
 }
 
@@ -101,8 +105,10 @@ struct TabView: View {
             HStack(spacing: 4) {
                 Image(systemName: tab.file.icon)
                     .font(.system(size: 12))
+                    .foregroundColor(Color.truAiText)
                 Text(tab.file.name)
                     .font(.system(size: 14))
+                    .foregroundColor(Color.truAiText)
                 if tab.isModified {
                     Circle()
                         .fill(Color.blue)
@@ -111,12 +117,13 @@ struct TabView: View {
                 Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 10))
+                        .foregroundColor(Color.truAiText.opacity(0.7))
                 }
                 .buttonStyle(PlainButtonStyle())
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(isSelected ? Color(UIColor.systemBackground) : Color.clear)
+            .background(isSelected ? Color.truAiDarkBackground : Color.clear)
         }
         .buttonStyle(PlainButtonStyle())
     }

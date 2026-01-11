@@ -18,13 +18,15 @@ struct GitPanelView: View {
                 Text("SOURCE CONTROL")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.truAiText.opacity(0.7))
                 Spacer()
                 Button(action: { Task { await viewModel.loadStatus() } }) {
                     Image(systemName: "arrow.clockwise")
+                        .foregroundColor(Color.truAiText)
                 }
             }
             .padding()
+            .background(Color.truAiLightBackground)
             
             if let status = viewModel.status {
                 ScrollView {
@@ -33,10 +35,11 @@ struct GitPanelView: View {
                         VStack(alignment: .leading) {
                             Text("Message")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.truAiText.opacity(0.7))
                             TextEditor(text: $viewModel.commitMessage)
                                 .frame(height: 100)
-                                .border(Color.gray.opacity(0.3))
+                                .foregroundColor(Color.truAiText)
+                                .border(Color.truAiText.opacity(0.3))
                         }
                         
                         // Commit button
@@ -94,12 +97,13 @@ struct GitPanelView: View {
             } else {
                 VStack {
                     Text("No Git repository")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.truAiText.opacity(0.7))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(Color.truAiDarkBackground)
+        .foregroundColor(Color.truAiText)
         .onAppear {
             Task { await viewModel.loadStatus() }
         }
