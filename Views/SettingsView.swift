@@ -100,6 +100,18 @@ struct SettingsView: View {
                 // About
                 Section(header: Text("About")) {
                     HStack {
+                        Spacer()
+                        if let uiImage = UIImage(named: "TruAi-transparent-bg") {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 60)
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
+                    
+                    HStack {
                         Text("Version")
                         Spacer()
                         Text("1.0.0")
