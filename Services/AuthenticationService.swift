@@ -16,14 +16,11 @@ class AuthenticationService: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var error: Error?
     
-    private let networkService: NetworkService
     private let storageService: StorageService
     private let tokenKey = "auth_token"
     private let userKey = "current_user"
     
-    init(networkService: NetworkService = NetworkService.shared,
-         storageService: StorageService = StorageService.shared) {
-        self.networkService = networkService
+    init(storageService: StorageService = StorageService.shared) {
         self.storageService = storageService
         loadStoredUser()
     }
