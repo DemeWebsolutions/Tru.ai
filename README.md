@@ -148,7 +148,7 @@ The framework is structured to support:
 
 ## License
 
-Copyright © 2024 Tru.ai. All rights reserved.
+Copyright Tru.ai | TruAi | TruAi Core | Tru.ai Core - Proprietary and intellectual property My Deme, Llc. © 2026 All rights reserved.
 
 ## Support
 
