@@ -9,19 +9,15 @@ import Foundation
 import Combine
 
 class AuthenticationService: ObservableObject {
-    static let shared = AuthenticationService()
-    
     @Published var currentUser: User?
     @Published var isAuthenticated: Bool = false
     @Published var isLoading: Bool = false
     @Published var error: Error?
     
-    private let storageService: StorageService
     private let tokenKey = "auth_token"
     private let userKey = "current_user"
     
-    init(storageService: StorageService = StorageService.shared) {
-        self.storageService = storageService
+    init() {
         loadStoredUser()
     }
     

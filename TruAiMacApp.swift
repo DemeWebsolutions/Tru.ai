@@ -11,7 +11,7 @@ import SwiftUI
 @main
 struct TruAiMacApp: App {
     @StateObject private var appState = AppState()
-    @StateObject private var authService = AuthenticationService.shared
+    @StateObject private var authService = AuthenticationService()
     @StateObject private var aiService = TruAiService.shared
     
     var body: some Scene {

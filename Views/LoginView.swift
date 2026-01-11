@@ -147,6 +147,6 @@ struct CustomTextFieldStyle: TextFieldStyle {
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
-            .environmentObject(AuthenticationService.shared)
+            .environmentObject(AuthenticationService())
     }
 }
