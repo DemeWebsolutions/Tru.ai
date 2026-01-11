@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+
+# Electron
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Packages
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.AppImage
+*.exe
+*.zip
+*.tar.gz
+
+# Local config
+.env
+.env.local
