@@ -97,6 +97,7 @@
 		07C7A362506542948841AA0B /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/StatusBarView.swift"; sourceTree = "<group>"; };
 		5358F8C680D34FFF95A78CB4 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TerminalView.swift"; sourceTree = "<group>"; };
 		B57CF504C9344BD7BAC78077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A8B9C7D8E9F0A1B2C3D4E5F6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		35FB6FE4997D412E95117334 /* TruAi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TruAi.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -148,12 +149,6 @@
 				81CC1DAC4CB742198A364614 /* Project.swift */,
 				2ED909421042460F80FAF493 /* SearchResult.swift */,
 				20526929FE3E4004AB150179 /* User.swift */,
-				80454E3D46764A21B33C46D2 /* ChatViewModel.swift */,
-				AB525CE8966A4FD3A2124DDB /* CodeEditorViewModel.swift */,
-				EE7D0C85A30745A58DDF5894 /* CommandPaletteViewModel.swift */,
-				6E526869506C432D9315578D /* FileExplorerViewModel.swift */,
-				C5B0518535C94BA08AC414C6 /* GitViewModel.swift */,
-				E279CC24C56D457299D79F39 /* SearchViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -285,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1D68CD8E2B743569EF886F5 /* Info.plist in Resources */,
+				B2C3D4E5F6A7B8C9D0E1F2A3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
