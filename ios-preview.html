@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tru.ai IDE">
+    <meta name="theme-color" content="#1a1a1a">
+    <title>Tru.ai IDE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            -webkit-font-smoothing: antialiased;
+            position: fixed;
+            width: 100%;
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding-top: env(safe-area-inset-top);
+            background: #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .ide-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* File Explorer */
+        .file-explorer {
+            width: 200px;
+            background: #252526;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .explorer-header {
+            padding: 12px 16px;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .explorer-title {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .explorer-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 8px 0;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            color: #cccccc;
+            font-size: 13px;
+            -webkit-tap-highlight-color: rgba(255,255,255,0.1);
+        }
+
+        .file-item:active {
+            background: #2a2d2e;
+        }
+
+        .file-item.selected {
+            background: #094771;
+        }
+
+        .file-icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .file-icon.folder { color: #4a9eff; }
+        .file-icon.swift { color: #ff6b35; }
+
+        /* Editor */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+
+        .tab-bar {
+            height: 36px;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 8px;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: #1e1e1e;
+            border-right: 1px solid #3e3e42;
+            color: #cccccc;
+            font-size: 13px;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .tab.active {
+            color: #fff;
+        }
+
+        .tab-icon {
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        .editor-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            width: 45px;
+            background: #1e1e1e;
+            color: #858585;
+            font-size: 12px;
+            font-family: 'SF Mono', monospace;
+            padding: 12px 6px;
+            text-align: right;
+            line-height: 20px;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .code-editor {
+            flex: 1;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+            padding: 12px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            line-height: 20px;
+            white-space: pre;
+        }
+
+        .code-line {
+            min-height: 20px;
+        }
+
+        .keyword { color: #569cd6; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; }
+        .function { color: #dcdcaa; }
+
+        /* Bottom Panel */
+        .bottom-panel {
+            height: 180px;
+            background: #252526;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .panel-tab {
+            padding: 8px 16px;
+            color: #cccccc;
+            font-size: 12px;
+            -webkit-tap-highlight-color: rgba(255,255,255,0.1);
+            border-bottom: 2px solid transparent;
+        }
+
+        .panel-tab.active {
+            color: #fff;
+            border-bottom-color: #007acc;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 12px;
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+        }
+
+        .terminal {
+            background: #1e1e1e;
+            color: #cccccc;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+        }
+
+        .terminal-prompt {
+            color: #4ec9b0;
+        }
+
+        .ai-panel {
+            background: #252526;
+            color: #cccccc;
+        }
+
+        .ai-message {
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #2d2d30;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="status-bar">
+            <span>9:41</span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+                <span>📶</span>
+                <span>📶</span>
+                <span>🔋</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <div class="ide-layout">
+            <!-- File Explorer -->
+            <div class="file-explorer">
+                <div class="explorer-header">
+                    <div class="explorer-title">Explorer</div>
+                    <button style="background: none; border: none; color: #cccccc; font-size: 16px;">↻</button>
+                </div>
+                <div class="explorer-content">
+                    <div class="file-item selected">
+                        <div class="file-icon folder">📁</div>
+                        <div>TruAi</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 24px;">
+                        <div class="file-icon folder">📁</div>
+                        <div>Models</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 40px;">
+                        <div class="file-icon swift">📄</div>
+                        <div>FileItem.swift</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 40px;">
+                        <div class="file-icon swift">📄</div>
+                        <div>EditorTab.swift</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 24px;">
+                        <div class="file-icon folder">📁</div>
+                        <div>Views</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 40px;">
+                        <div class="file-icon swift">📄</div>
+                        <div>CodeEditorView.swift</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 24px;">
+                        <div class="file-icon folder">📁</div>
+                        <div>Services</div>
+                    </div>
+                    <div class="file-item" style="padding-left: 40px;">
+                        <div class="file-icon swift">📄</div>
+                        <div>FileSystemService.swift</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editor Area -->
+            <div class="editor-area">
+                <div class="tab-bar">
+                    <div class="tab active">
+                        <span class="tab-icon">📄</span>
+                        <span>CodeEditorView.swift</span>
+                    </div>
+                    <div class="tab">
+                        <span class="tab-icon">📄</span>
+                        <span>FileItem.swift</span>
+                    </div>
+                </div>
+                <div class="editor-content">
+                    <div class="line-numbers">
+                        1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20
+                    </div>
+                    <div class="code-editor">
+                        <div class="code-line"><span class="keyword">import</span> <span class="string">SwiftUI</span></div>
+                        <div class="code-line"></div>
+                        <div class="code-line"><span class="keyword">struct</span> <span class="function">CodeEditorView</span>: <span class="function">View</span> {</div>
+                        <div class="code-line">    <span class="keyword">@StateObject</span> <span class="keyword">private</span> <span class="keyword">var</span> viewModel = <span class="function">CodeEditorViewModel</span>()</div>
+                        <div class="code-line">    <span class="keyword">@State private var</span> editorText: <span class="function">String</span> = <span class="string">""</span></div>
+                        <div class="code-line"></div>
+                        <div class="code-line">    <span class="keyword">var</span> body: <span class="function">some View</span> {</div>
+                        <div class="code-line">        <span class="function">VStack</span>(spacing: <span class="string">0</span>) {</div>
+                        <div class="code-line">            <span class="comment">// Tab bar</span></div>
+                        <div class="code-line">            <span class="keyword">if</span> !viewModel.tabs.isEmpty {</div>
+                        <div class="code-line">                <span class="function">ScrollView</span>(.horizontal) {</div>
+                        <div class="code-line">                    <span class="function">HStack</span> {</div>
+                        <div class="code-line">                        <span class="keyword">ForEach</span>(viewModel.tabs) { tab <span class="keyword">in</span></div>
+                        <div class="code-line">                            <span class="function">EditorTabView</span>(tab: tab)</div>
+                        <div class="code-line">                        }</div>
+                        <div class="code-line">                    }</div>
+                        <div class="code-line">                }</div>
+                        <div class="code-line">            }</div>
+                        <div class="code-line">        }</div>
+                        <div class="code-line">    }</div>
+                        <div class="code-line">}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Panel -->
+        <div class="bottom-panel">
+            <div class="panel-tabs">
+                <div class="panel-tab active" onclick="showPanel('terminal')">Terminal</div>
+                <div class="panel-tab" onclick="showPanel('ai')">Tru.ai</div>
+            </div>
+            <div class="panel-content terminal" id="terminal-panel">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> pwd
+                </div>
+                <div class="terminal-line">/Users/mydemellc/Downloads/Contents/TruAi</div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> ls -la
+                </div>
+                <div class="terminal-line">Models/</div>
+                <div class="terminal-line">Views/</div>
+                <div class="terminal-line">Services/</div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> <span style="background: rgba(255,255,255,0.1); padding: 2px 4px;">_</span>
+                </div>
+            </div>
+            <div class="panel-content ai-panel" id="ai-panel" style="display: none;">
+                <div class="ai-message">
+                    <strong>You:</strong> Can you explain this code?
+                </div>
+                <div class="ai-message">
+                    <strong>Tru.ai:</strong> This is a SwiftUI view that creates a code editor interface with tab support. It uses a ViewModel to manage the editor state and displays code with syntax highlighting.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPanel(panel) {
+            document.getElementById('terminal-panel').style.display = panel === 'terminal' ? 'block' : 'none';
+            document.getElementById('ai-panel').style.display = panel === 'ai' ? 'block' : 'none';
+            
+            document.querySelectorAll('.panel-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
