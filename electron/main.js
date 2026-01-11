@@ -3,6 +3,14 @@ const path = require('path');
 const fs = require('fs').promises;
 const Store = require('electron-store');
 
+// Configuration constants
+const APP_CONFIG = {
+  repository: 'https://github.com/DemeWebsolutions/Tru.ai',
+  docsUrl: 'https://docs.tru.ai',
+  issuesUrl: 'https://github.com/DemeWebsolutions/Tru.ai/issues',
+  version: '1.0.0'
+};
+
 // Initialize electron-store for persistent settings
 const store = new Store();
 
@@ -216,14 +224,14 @@ function createMenu() {
           label: 'Documentation',
           click: async () => {
             const { shell } = require('electron');
-            await shell.openExternal('https://docs.tru.ai');
+            await shell.openExternal(APP_CONFIG.docsUrl);
           }
         },
         {
           label: 'Report Issue',
           click: async () => {
             const { shell } = require('electron');
-            await shell.openExternal('https://github.com/DemeWebsolutions/Tru.ai/issues');
+            await shell.openExternal(APP_CONFIG.issuesUrl);
           }
         },
         { type: 'separator' },
@@ -234,7 +242,7 @@ function createMenu() {
               type: 'info',
               title: 'About Tru.ai',
               message: 'Tru.ai Desktop',
-              detail: 'Version 1.0.0\n\nAI-powered IDE for modern development\n\nCopyright © 2026 Tru.ai. All rights reserved.'
+              detail: `Version ${APP_CONFIG.version}\n\nAI-powered IDE for modern development\n\nCopyright © 2026 Tru.ai. All rights reserved.`
             });
           }
         }

@@ -266,11 +266,10 @@ class TruAiApp {
     
     const tab = this.tabs[tabIndex];
     
-    // TODO: Prompt to save if dirty
+    // Prompt to save if dirty
     if (tab.isDirty) {
-      if (!confirm(`Save changes to ${tab.name}?`)) {
-        // User doesn't want to save
-      } else {
+      const shouldSave = confirm(`Save changes to ${tab.name}?`);
+      if (shouldSave) {
         this.saveCurrentFile();
       }
     }

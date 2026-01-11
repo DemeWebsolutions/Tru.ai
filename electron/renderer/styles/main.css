@@ -119,10 +119,13 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
 .sidebar.hidden {
-  display: none;
+  transform: translateX(-100%);
+  position: absolute;
+  left: 0;
 }
 
 .sidebar-header {
