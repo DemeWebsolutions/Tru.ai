@@ -94,7 +94,7 @@ struct LoginView: View {
                 Spacer()
                 
                 // Footer
-                Text("© 2024 Tru.ai. All rights reserved.")
+                Text("© 2026 Tru.ai. All rights reserved.")
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.6))
                     .padding(.bottom, 20)
