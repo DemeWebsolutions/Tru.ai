@@ -2,6 +2,25 @@
 
 A standalone iOS application framework for Tru.ai core functionality, built with SwiftUI and modern iOS development practices.
 
+## 🎯 Two macOS Applications Available
+
+This repository now includes **two separate macOS applications**:
+
+### 1. **TruAi IDE (Standalone)** ⭐ NEW
+- **Launch:** Direct to Cursor-like IDE interface
+- **Authentication:** Not required
+- **Best for:** Personal projects, quick editing, offline work
+- **Entry point:** `TruAiIDEApp.swift`
+- **Documentation:** See [README_IDE_STANDALONE.md](README_IDE_STANDALONE.md)
+
+### 2. **TruAi (Full Application)**
+- **Launch:** Login screen → IDE interface
+- **Authentication:** Required
+- **Best for:** Teams, multi-user environments
+- **Entry point:** `TruAiMacApp.swift`
+
+**See [APP_COMPARISON.md](APP_COMPARISON.md) for detailed comparison and [LAUNCH_GUIDE.md](LAUNCH_GUIDE.md) for setup instructions.**
+
 ## Project Structure
 
 ```
