@@ -2,6 +2,15 @@
 
 This guide explains how to configure and launch the standalone Tru.ai IDE macOS application.
 
+## ⚠️ Important: @main Conflict
+
+**CRITICAL:** Only ONE file should have the `@main` attribute at a time. The repository includes:
+- `TruAiIDEApp.swift` - Standalone IDE (NEW) ✅ Has @main
+- `TruAiMacApp.swift` - Full app with auth (Has @main wrapped in `#if os(macOS)`)
+- `TruAiApp.swift` - iOS version (Has @main)
+
+**Solution:** Use **conditional compilation** or choose one entry point. See "Method 3" below for details.
+
 ## Overview
 
 The repository now contains **two separate macOS applications**:

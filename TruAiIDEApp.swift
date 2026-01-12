@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-#if os(macOS)
 @main
 struct TruAiIDEApp: App {
     @StateObject private var appState = AppState()
@@ -174,13 +173,11 @@ struct TruAiIDEApp: App {
         }
         
         // About Window
-        #if os(macOS)
         Window("About Tru.ai IDE", id: "about") {
             AboutView()
                 .frame(width: 400, height: 300)
         }
         .windowResizability(.contentSize)
-        #endif
     }
 }
 
@@ -236,4 +233,3 @@ struct InfoRow: View {
         .font(.system(.body, design: .monospaced))
     }
 }
-#endif
