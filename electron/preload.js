@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getVersion: () => ipcRenderer.invoke('app:getVersion'),
   getPlatform: () => ipcRenderer.invoke('app:getPlatform'),
   
+  // Generic invoke method for all IPC calls
+  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+  
   // Menu event listeners
   onNewFile: (callback) => ipcRenderer.on('menu-new-file', callback),
   onOpenFile: (callback) => ipcRenderer.on('menu-open-file', callback),
@@ -23,7 +26,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onNewConversation: (callback) => ipcRenderer.on('menu-new-conversation', callback),
   onToggleAIPanel: (callback) => ipcRenderer.on('menu-toggle-ai-panel', callback),
   onDocumentation: (callback) => ipcRenderer.on('menu-documentation', callback),
-  onAbout: (callback) => ipcRenderer.on('menu-about', callback)
+  onAbout: (callback) => ipcRenderer.on('menu-about', callback),
+  
+  // Terminal event listeners
+  onTerminalOutput: (callback) => ipcRenderer.on('terminal-output', (event, terminalId, data) => callback(terminalId, data)),
+  onTerminalExit: (callback) => ipcRenderer.on('terminal-exit', (event, terminalId, code) => callback(terminalId, code))
 });
 
 // Expose TruAi Core API to renderer process

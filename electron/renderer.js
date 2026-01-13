@@ -38,6 +38,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Initialize TruAi Core integration
   initializeTruAiCore();
+  
+  // Initialize Monaco Editor
+  require(['vs/editor/editor.main'], async function() {
+    if (window.monacoAPI) {
+      await window.monacoAPI.initialize();
+      console.log('Monaco Editor ready');
+    }
+  });
+  
+  // Initialize File Explorer
+  if (window.fileExplorerAPI) {
+    window.fileExplorerAPI.initialize();
+  }
+  
+  // Setup keyboard shortcuts
+  setupKeyboardShortcuts();
 });
 
 // Initialize TruAi Core integration
@@ -54,22 +70,23 @@ async function initializeTruAiCore() {
 // Update risk level indicator in UI
 function updateRiskIndicator(riskLevel) {
   state.riskLevel = riskLevel;
-  const statusDot = document.querySelector('.status-dot');
+  const riskIndicator = document.getElementById('riskIndicator');
   
-  if (!statusDot) return;
+  if (!riskIndicator) return;
   
-  // Update indicator color based on risk
-  statusDot.classList.remove('online');
-  
+  // Update indicator based on risk
   switch (riskLevel) {
     case 'SAFE':
-      statusDot.style.backgroundColor = '#10b981'; // Green
+      riskIndicator.textContent = '🟢 SAFE';
+      riskIndicator.style.color = '#10b981';
       break;
     case 'ELEVATED':
-      statusDot.style.backgroundColor = '#f59e0b'; // Amber
+      riskIndicator.textContent = '🟡 ELEVATED';
+      riskIndicator.style.color = '#f59e0b';
       break;
     case 'LOCKED':
-      statusDot.style.backgroundColor = '#ef4444'; // Red
+      riskIndicator.textContent = '🔴 LOCKED';
+      riskIndicator.style.color = '#ef4444';
       break;
   }
 }
@@ -284,19 +301,25 @@ function setupMenuListeners() {
   // New File
   window.electronAPI.onNewFile(() => {
     console.log('Menu: New File');
-    // TODO: Implement new file
+    if (window.fileExplorerAPI) {
+      document.getElementById('newFileBtn')?.click();
+    }
   });
   
   // Open File
   window.electronAPI.onOpenFile(() => {
     console.log('Menu: Open File');
-    // TODO: Implement open file
+    if (window.fileExplorerAPI) {
+      document.getElementById('openFolderBtn')?.click();
+    }
   });
   
   // Save
-  window.electronAPI.onSave(() => {
+  window.electronAPI.onSave(async () => {
     console.log('Menu: Save');
-    // TODO: Implement save
+    if (window.fileExplorerAPI) {
+      await window.fileExplorerAPI.saveFile();
+    }
   });
   
   // New Conversation
@@ -333,5 +356,59 @@ function setupMenuListeners() {
   window.electronAPI.onAbout(() => {
     console.log('Menu: About');
     alert('Tru.ai v1.0.0\nAI-Powered IDE\n© 2026 My Deme, LLC. All rights reserved.');
+  });
+}
+
+// Setup keyboard shortcuts
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', async (e) => {
+    // Cmd/Ctrl + S: Save file
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+      e.preventDefault();
+      if (window.fileExplorerAPI) {
+        await window.fileExplorerAPI.saveFile();
+      }
+    }
+    
+    // Cmd/Ctrl + W: Close tab
+    if ((e.metaKey || e.ctrlKey) && e.key === 'w') {
+      e.preventDefault();
+      const activeTab = document.querySelector('.editor-tab.active');
+      if (activeTab && window.fileExplorerAPI) {
+        window.fileExplorerAPI.closeTab(activeTab.dataset.filePath);
+      }
+    }
+    
+    // Cmd/Ctrl + F: Find
+    if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+      e.preventDefault();
+      if (window.monacoAPI) {
+        window.monacoAPI.find();
+      }
+    }
+    
+    // Cmd/Ctrl + H: Replace
+    if ((e.metaKey || e.ctrlKey) && e.key === 'h') {
+      e.preventDefault();
+      if (window.monacoAPI) {
+        window.monacoAPI.replace();
+      }
+    }
+    
+    // Cmd/Ctrl + G: Go to line
+    if ((e.metaKey || e.ctrlKey) && e.key === 'g') {
+      e.preventDefault();
+      if (window.monacoAPI) {
+        window.monacoAPI.goToLine();
+      }
+    }
+    
+    // Cmd/Ctrl + Shift + F: Format document
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'f') {
+      e.preventDefault();
+      if (window.monacoAPI) {
+        window.monacoAPI.format();
+      }
+    }
   });
 }

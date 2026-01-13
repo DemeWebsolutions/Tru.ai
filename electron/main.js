@@ -6,12 +6,18 @@
  * FORENSIC_MARKER: TRUAI_ELECTRON_MAIN_V1
  */
 
-const { app, BrowserWindow, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs').promises;
+const fsSync = require('fs');
 const { TruAiCore, RiskLevels } = require('./core/truai-core');
+const simpleGit = require('simple-git');
+const pty = require('node-pty');
 
 let mainWindow;
 let truaiCore;
+let terminals = new Map(); // terminalId -> pty instance
+let git = null;
 
 function createWindow() {
   // Initialize TruAi Core
@@ -216,4 +222,183 @@ ipcMain.handle('truai:getAuditLog', () => {
 
 ipcMain.handle('truai:verifyArtifact', (event, artifact) => {
   return truaiCore.verifyArtifact(artifact);
+});
+
+// File System IPC Handlers
+ipcMain.handle('read-file', async (event, filePath) => {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    return { success: true, content };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('write-file', async (event, filePath, content) => {
+  try {
+    await fs.writeFile(filePath, content, 'utf-8');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('read-directory', async (event, dirPath) => {
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    const files = entries.map(entry => ({
+      name: entry.name,
+      path: path.join(dirPath, entry.name),
+      isDirectory: entry.isDirectory()
+    }));
+    return { success: true, files };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('create-file', async (event, filePath, content = '') => {
+  try {
+    await fs.writeFile(filePath, content, 'utf-8');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('create-directory', async (event, dirPath) => {
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('delete-file', async (event, filePath) => {
+  try {
+    const stats = await fs.stat(filePath);
+    if (stats.isDirectory()) {
+      await fs.rmdir(filePath, { recursive: true });
+    } else {
+      await fs.unlink(filePath);
+    }
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('open-file-dialog', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile']
+  });
+  return result;
+});
+
+ipcMain.handle('open-folder-dialog', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory']
+  });
+  return result;
+});
+
+// Terminal IPC Handlers
+ipcMain.handle('create-terminal', (event, terminalId, shell = 'zsh') => {
+  try {
+    const ptyProcess = pty.spawn(shell, [], {
+      name: 'xterm-color',
+      cols: 80,
+      rows: 30,
+      cwd: process.env.HOME || process.cwd(),
+      env: process.env
+    });
+
+    terminals.set(terminalId, ptyProcess);
+
+    // Send output to renderer
+    ptyProcess.onData((data) => {
+      mainWindow.webContents.send('terminal-output', terminalId, data);
+    });
+
+    ptyProcess.onExit((code) => {
+      mainWindow.webContents.send('terminal-exit', terminalId, code);
+      terminals.delete(terminalId);
+    });
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('write-terminal', (event, terminalId, data) => {
+  const terminal = terminals.get(terminalId);
+  if (terminal) {
+    terminal.write(data);
+    return { success: true };
+  }
+  return { success: false, error: 'Terminal not found' };
+});
+
+ipcMain.handle('kill-terminal', (event, terminalId) => {
+  const terminal = terminals.get(terminalId);
+  if (terminal) {
+    terminal.kill();
+    terminals.delete(terminalId);
+    return { success: true };
+  }
+  return { success: false, error: 'Terminal not found' };
+});
+
+// Git IPC Handlers
+ipcMain.handle('git-status', async (event, repoPath) => {
+  try {
+    git = simpleGit(repoPath);
+    const status = await git.status();
+    return { success: true, status };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('git-branches', async (event, repoPath) => {
+  try {
+    git = simpleGit(repoPath);
+    const branches = await git.branch();
+    return { success: true, branches };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('git-commit', async (event, repoPath, message) => {
+  try {
+    git = simpleGit(repoPath);
+    await git.add('./*');
+    const result = await git.commit(message);
+    return { success: true, result };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('git-push', async (event, repoPath) => {
+  try {
+    git = simpleGit(repoPath);
+    const result = await git.push();
+    return { success: true, result };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('git-pull', async (event, repoPath) => {
+  try {
+    git = simpleGit(repoPath);
+    const result = await git.pull();
+    return { success: true, result };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 });

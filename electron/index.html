@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net;">
   <title>Tru.ai - AI-Powered IDE</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
 </head>
 <body>
   <div class="app-container">
@@ -35,10 +36,14 @@
       <aside class="sidebar">
         <div class="sidebar-section">
           <h3>Files</h3>
+          <div class="sidebar-actions">
+            <button class="icon-btn" id="openFolderBtn" title="Open Folder">📂</button>
+            <button class="icon-btn" id="newFileBtn" title="New File">➕</button>
+          </div>
           <div class="file-tree" id="fileTree">
             <div class="file-item">
               <span class="file-icon">📁</span>
-              <span>Project</span>
+              <span>Open a workspace folder to begin</span>
             </div>
           </div>
         </div>
@@ -52,41 +57,11 @@
 
       <!-- Main Editor Area -->
       <section class="editor-container" id="editorView">
-        <div class="editor-tabs">
-          <div class="tab active">
-            <span class="tab-name">Welcome</span>
-            <button class="tab-close">×</button>
-          </div>
+        <div class="editor-tabs" id="editorTabs">
+          <!-- Tabs will be dynamically added here -->
         </div>
         <div class="editor-content">
-          <div class="welcome-screen">
-            <h1>Welcome to Tru.ai</h1>
-            <p class="subtitle">AI-Powered Development Environment</p>
-            <div class="quick-actions">
-              <button class="action-btn primary" id="newFileBtn">
-                <span class="btn-icon">📄</span>
-                <span>New File</span>
-              </button>
-              <button class="action-btn" id="openFileBtn">
-                <span class="btn-icon">📂</span>
-                <span>Open File</span>
-              </button>
-              <button class="action-btn" id="startAIBtn">
-                <span class="btn-icon">🤖</span>
-                <span>Start AI Session</span>
-              </button>
-            </div>
-            <div class="info-section">
-              <h3>Features</h3>
-              <ul>
-                <li>🚀 AI-powered code generation and completion</li>
-                <li>💡 Intelligent code suggestions</li>
-                <li>🔍 Advanced search and navigation</li>
-                <li>🎨 Customizable interface</li>
-                <li>⚡ Fast and responsive</li>
-              </ul>
-            </div>
-          </div>
+          <div id="monacoEditor" style="width: 100%; height: 100%;"></div>
         </div>
       </section>
 
@@ -180,17 +155,27 @@
     <!-- Status Bar -->
     <footer class="status-bar">
       <div class="status-left">
-        <span class="status-item">Ready</span>
-        <span class="status-item">Line 1, Col 1</span>
+        <span class="status-item" id="riskIndicator">🟢 SAFE</span>
+        <span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
+        <span class="status-item" id="gitBranch">main</span>
       </div>
       <div class="status-right">
         <span class="status-item">UTF-8</span>
-        <span class="status-item">JavaScript</span>
+        <span class="status-item" id="editorLanguage">JavaScript</span>
         <span class="status-item" id="platform">Electron</span>
       </div>
     </footer>
   </div>
 
+  <!-- Monaco Editor CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script>
+    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' }});
+  </script>
+
+  <!-- Application Scripts -->
+  <script src="src/js/monaco-loader.js"></script>
+  <script src="src/js/file-explorer.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>
