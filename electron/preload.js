@@ -1,6 +1,12 @@
-// Tru.ai Electron Preload Script
-// Copyright © 2026 My Deme, LLC. All rights reserved.
-// This script runs in a secure context with access to Node.js APIs
+/**
+ * Tru.ai Electron Preload Script
+ * Copyright © 2026 My Deme, LLC. All rights reserved.
+ * Proprietary and confidential - Internal use only
+ * 
+ * FORENSIC_MARKER: TRUAI_ELECTRON_PRELOAD_V1
+ * 
+ * This script runs in a secure context with access to Node.js APIs
+ */
 
 const { contextBridge, ipcRenderer } = require('electron');
 
@@ -18,6 +24,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onToggleAIPanel: (callback) => ipcRenderer.on('menu-toggle-ai-panel', callback),
   onDocumentation: (callback) => ipcRenderer.on('menu-documentation', callback),
   onAbout: (callback) => ipcRenderer.on('menu-about', callback)
+});
+
+// Expose TruAi Core API to renderer process
+contextBridge.exposeInMainWorld('truaiCore', {
+  getStatus: () => ipcRenderer.invoke('truai:getStatus'),
+  executeTask: (task) => ipcRenderer.invoke('truai:executeTask', task),
+  adminOverride: (override) => ipcRenderer.invoke('truai:adminOverride', override),
+  getAuditLog: () => ipcRenderer.invoke('truai:getAuditLog'),
+  verifyArtifact: (artifact) => ipcRenderer.invoke('truai:verifyArtifact', artifact)
 });
 
 // Log preload script loaded (for debugging)

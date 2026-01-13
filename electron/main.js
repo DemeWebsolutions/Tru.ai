@@ -1,12 +1,25 @@
-// Tru.ai Electron Main Process
-// Copyright © 2026 My Deme, LLC. All rights reserved.
+/**
+ * Tru.ai Electron Main Process
+ * Copyright © 2026 My Deme, LLC. All rights reserved.
+ * Proprietary and confidential - Internal use only
+ * 
+ * FORENSIC_MARKER: TRUAI_ELECTRON_MAIN_V1
+ */
 
 const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
+const { TruAiCore, RiskLevels } = require('./core/truai-core');
 
 let mainWindow;
+let truaiCore;
 
 function createWindow() {
+  // Initialize TruAi Core
+  truaiCore = new TruAiCore();
+  truaiCore.initialize({
+    adminId: 'admin-001', // TODO: Implement proper admin authentication
+    offlineMode: false
+  });
   // Create the browser window
   mainWindow = new BrowserWindow({
     width: 1400,
@@ -182,4 +195,25 @@ ipcMain.handle('app:getVersion', () => {
 
 ipcMain.handle('app:getPlatform', () => {
   return process.platform;
+});
+
+// TruAi Core IPC Handlers
+ipcMain.handle('truai:getStatus', () => {
+  return truaiCore.getStatus();
+});
+
+ipcMain.handle('truai:executeTask', async (event, task) => {
+  return await truaiCore.executeTask(task);
+});
+
+ipcMain.handle('truai:adminOverride', (event, override) => {
+  return truaiCore.adminOverride(override);
+});
+
+ipcMain.handle('truai:getAuditLog', () => {
+  return truaiCore.getAuditLog();
+});
+
+ipcMain.handle('truai:verifyArtifact', (event, artifact) => {
+  return truaiCore.verifyArtifact(artifact);
 });

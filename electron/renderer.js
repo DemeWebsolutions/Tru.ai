@@ -1,11 +1,17 @@
-// Tru.ai Electron Renderer Process
-// Copyright © 2026 My Deme, LLC. All rights reserved.
+/**
+ * Tru.ai Electron Renderer Process
+ * Copyright © 2026 My Deme, LLC. All rights reserved.
+ * Proprietary and confidential - Internal use only
+ * 
+ * FORENSIC_MARKER: TRUAI_ELECTRON_RENDERER_V1
+ */
 
 // State management
 const state = {
   currentView: 'editor',
   conversations: [],
-  files: []
+  files: [],
+  riskLevel: 'SAFE'
 };
 
 // Initialize app when DOM is ready
@@ -29,7 +35,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupAIPanelListeners();
   setupMenuListeners();
   setupTerminalListeners();
+  
+  // Initialize TruAi Core integration
+  initializeTruAiCore();
 });
+
+// Initialize TruAi Core integration
+async function initializeTruAiCore() {
+  try {
+    const status = await window.truaiCore.getStatus();
+    console.log('TruAi Core Status:', status);
+    updateRiskIndicator(status.risk.riskLevel);
+  } catch (error) {
+    console.error('Failed to initialize TruAi Core:', error);
+  }
+}
+
+// Update risk level indicator in UI
+function updateRiskIndicator(riskLevel) {
+  state.riskLevel = riskLevel;
+  const statusDot = document.querySelector('.status-dot');
+  
+  if (!statusDot) return;
+  
+  // Update indicator color based on risk
+  statusDot.classList.remove('online');
+  
+  switch (riskLevel) {
+    case 'SAFE':
+      statusDot.style.backgroundColor = '#10b981'; // Green
+      break;
+    case 'ELEVATED':
+      statusDot.style.backgroundColor = '#f59e0b'; // Amber
+      break;
+    case 'LOCKED':
+      statusDot.style.backgroundColor = '#ef4444'; // Red
+      break;
+  }
+}
 
 // Navigation between views
 function setupNavigationListeners() {
@@ -128,11 +171,52 @@ function sendAIMessage() {
   // Clear input
   aiInput.value = '';
   
-  // Simulate AI response (replace with actual AI integration)
-  setTimeout(() => {
-    const response = 'This is a placeholder response. Integrate with Tru.ai Core API for actual AI functionality.';
-    addChatMessage('ai', response);
-  }, 1000);
+function sendAIMessage() {
+  const aiInput = document.getElementById('aiInput');
+  const message = aiInput.value.trim();
+  
+  if (!message) return;
+  
+  // Add user message to chat
+  addChatMessage('user', message);
+  
+  // Clear input
+  aiInput.value = '';
+  
+  // Execute through TruAi Core
+  executeTruAiTask({
+    type: 'ai_chat',
+    scope: 'conversation',
+    target: 'ai_assistant',
+    isProduction: false,
+    task: message
+  });
+}
+
+// Execute task through TruAi Core
+async function executeTruAiTask(task) {
+  try {
+    const result = await window.truaiCore.executeTask(task);
+    
+    if (!result.success) {
+      if (result.requiresApproval) {
+        // Show approval dialog
+        const approved = confirm(`This operation requires admin approval.\nRisk Level: ${result.riskLevel}\n\nApprove?`);
+        if (approved) {
+          // Re-submit with approval
+          const taskWithApproval = { ...task, adminApproval: true };
+          return await window.truaiCore.executeTask(taskWithApproval);
+        }
+        return result;
+      }
+      return result;
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Task execution failed:', error);
+    return { success: false, error: error.message };
+  }
 }
 
 function addChatMessage(type, content) {
