@@ -1,150 +1,177 @@
-# Tru.ai iOS Application
+# Tru.ai Desktop IDE
 
-A standalone iOS application framework for Tru.ai core functionality, built with SwiftUI and modern iOS development practices.
+A complete cross-platform Electron desktop IDE with integrated TruAi Core governance system for risk classification, AI routing, and forensic audit trails.
+
+## Quick Start
+
+```bash
+cd electron
+./start.sh
+```
+
+The `start.sh` script will automatically:
+- Check system requirements (Node.js 16+, npm)
+- Install dependencies if needed
+- Start the application
 
 ## Project Structure
 
 ```
-TruAi/
-├── TruAiApp.swift              # Main app entry point
-├── Models/                      # Data models
-│   ├── AppState.swift          # Global app state
-│   ├── User.swift              # User model
-│   ├── ChatMessage.swift       # Message model
-│   └── Conversation.swift      # Conversation model
-├── Services/                    # Business logic layer
-│   ├── TruAiService.swift      # Core AI service
-│   ├── NetworkService.swift    # API communication
-│   └── StorageService.swift    # Local persistence
-├── ViewModels/                  # MVVM view models
-│   └── ChatViewModel.swift     # Chat view model
-├── Views/                       # SwiftUI views
-│   ├── ContentView.swift       # Main content view
-│   ├── ChatView.swift          # Chat interface
-│   ├── HistoryView.swift       # Conversation history
-│   └── SettingsView.swift      # Settings screen
-├── Utilities/                   # Helper utilities
-│   └── Extensions.swift        # Swift extensions
-├── Configuration/               # App configuration
-│   └── AppConfig.swift         # Configuration constants
-├── Info.plist                  # App configuration
-└── README.md                    # This file
+electron/
+├── core/                      # TruAi Core governance engine
+│   ├── truai-core.js         # Central orchestration
+│   ├── risk-engine.js        # Risk classification & kill-switch
+│   └── ai-router.js          # AI routing & watermarking
+├── src/
+│   ├── css/                  # Complete styling system
+│   │   ├── styles.css        # Main application styles
+│   │   ├── editor.css        # Editor styles
+│   │   └── terminal.css      # Terminal styles
+│   └── js/                   # Complete IDE modules
+│       ├── app.js            # Main application logic
+│       ├── monaco-loader.js  # Monaco Editor integration
+│       ├── file-explorer.js  # File/workspace management
+│       ├── terminal.js       # Terminal with node-pty
+│       ├── git.js            # Git operations
+│       ├── ai.js             # AI chat functionality
+│       ├── agents.js         # Agent management
+│       ├── editor.js         # Editor utilities
+│       ├── search.js         # File search
+│       ├── settings.js       # Settings management
+│       └── contents-panel.js # Contents/Outline panel
+├── main.js                   # Electron main process
+├── preload.js                # Secure IPC bridge
+├── renderer.js               # Frontend initialization
+├── index.html                # UI structure
+├── package.json              # Dependencies
+└── start.sh                  # Startup script
 ```
 
 ## Features
 
-- **Modern SwiftUI Architecture**: Built with SwiftUI and MVVM pattern
-- **AI Integration**: Core service for Tru.ai API communication
-- **Conversation Management**: Full CRUD operations for conversations
-- **Local Persistence**: UserDefaults-based storage for conversations
-- **Streaming Support**: Async streaming for real-time AI responses
-- **Dark Mode Support**: Built-in theme management
-- **Error Handling**: Comprehensive error handling throughout
+### IDE Capabilities
+- **Monaco Editor** - VS Code's editor with 20+ language support
+- **File Explorer** - Workspace management with multi-tab editing
+- **Integrated Terminal** - Real terminal with command history
+- **Git Integration** - Status, commit, push, pull operations
+- **AI Chat** - Multi-provider AI (OpenAI, Anthropic, Custom)
+- **Agent Management** - Search/New Agent functionality
+- **File Search** - Case-sensitive and whole word options
+- **Contents/Outline Panel** - File structure visualization
+- **Settings Management** - Configurable preferences
+- **Keyboard Shortcuts** - Full IDE shortcuts
+
+### TruAi Core Governance
+- **Risk Classification** - SAFE/ELEVATED/LOCKED states
+- **AI Router** - Cost-efficient model selection
+- **Forensic Watermarking** - Traceable AI outputs
+- **Kill-switch Authority** - Admin-only emergency stops
+- **Immutable Audit Logging** - Integrity hashing
+- **CI Enforcement** - Policy validation
 
 ## Requirements
 
-- iOS 15.0+
-- Xcode 14.0+
-- Swift 5.7+
+- **Node.js** 16.0.0 or higher
+- **npm** 7.0.0 or higher
+- **Git** (for Git integration features)
 
-## Setup Instructions
+## Manual Installation
 
-1. **Open in Xcode**
-   ```bash
-   open TruAi.xcodeproj
-   ```
+If you prefer manual installation:
 
-2. **Configure API Key**
-   - Set your Tru.ai API key in Settings view
-   - Or set environment variable: `TRU_AI_API_KEY`
-
-3. **Build and Run**
-   - Select your target device/simulator
-   - Press Cmd+R to build and run
+```bash
+cd electron
+npm install
+npm start
+```
 
 ## Configuration
 
-### API Configuration
+### AI Configuration
+Launch the application and click Settings to configure:
+- API keys (OpenAI, Anthropic, or Custom)
+- AI model selection
+- Temperature settings
 
-Update `AppConfig.swift` or use Settings view to configure:
-- API Base URL
-- Default Model
-- Temperature
-- Max Tokens
+### Editor Configuration
+Configure in Settings:
+- Font size (10-24px)
+- Tab size (2-8 spaces)
+- Word wrap (on/off)
+- Line numbers (on/off)
 
-### Environment Variables
+### Terminal Configuration
+The terminal automatically detects your system shell:
+- macOS/Linux: zsh, bash, or fish
+- Windows: PowerShell or cmd
 
-Set the following environment variables for development:
-```bash
-export TRU_AI_API_KEY="your-api-key-here"
-```
+## Keyboard Shortcuts
+
+- **Cmd+S** (Ctrl+S) - Save file
+- **Cmd+W** (Ctrl+W) - Close tab
+- **Cmd+F** (Ctrl+F) - Find in file
+- **Cmd+H** (Ctrl+H) - Replace in file
+- **Cmd+G** (Ctrl+G) - Go to line
+- **Cmd+Shift+F** (Ctrl+Shift+F) - Format code
 
 ## Architecture
 
-### MVVM Pattern
+### Security
+- Context isolation enabled
+- Sandbox enforced
+- Secure IPC bridge with preload script
+- XSS prevention (textContent over innerHTML)
+- CSS injection prevention
+- All files include proprietary headers and forensic markers
 
-- **Models**: Data structures and business entities
-- **Views**: SwiftUI views for UI presentation
-- **ViewModels**: Business logic and state management
-- **Services**: Network, storage, and AI service layers
+### TruAi Core Integration
+All AI operations are governed through TruAi Core:
 
-### Key Components
-
-1. **TruAiService**: Core service managing conversations and AI interactions
-2. **NetworkService**: Handles all API communication with Tru.ai backend
-3. **StorageService**: Manages local persistence using UserDefaults
-4. **AppState**: Global application state management
-
-## Usage
-
-### Creating a Conversation
-
-```swift
-let aiService = TruAiService()
-aiService.createNewConversation()
+```javascript
+const result = await window.truaiCore.executeTask({
+  type: 'code_generation',
+  scope: 'project',
+  isProduction: false,
+  task: 'Refactor auth logic'
+});
 ```
 
-### Sending a Message
+Risk classification determines approval flow:
+- **SAFE** (🟢) - Auto-approved with audit trail
+- **ELEVATED** (🟡) - Manual approval required
+- **LOCKED** (🔴) - Admin-only override
 
-```swift
-await aiService.sendMessage("Hello, Tru.ai!")
+## Building for Production
+
+```bash
+cd electron
+
+# macOS
+npm run build:mac
+
+# Windows
+npm run build:win
+
+# Linux
+npm run build:linux
 ```
 
-### Streaming Responses
+## Dependencies
 
-```swift
-let stream = networkService.sendStreamingChatRequest(messages: messages)
-for try await chunk in stream {
-    // Handle streaming response
-}
-```
+### Production
+- `monaco-editor@^0.45.0` - Code editor
+- `simple-git@^3.20.0` - Git operations
+- `node-pty@^1.0.0` - Terminal/PTY support
 
-## Customization
+### Development
+- `electron@^28.0.0` - Framework
+- `electron-builder@^24.9.1` - Build and packaging
 
-### Adding New Models
+## Documentation
 
-1. Create model file in `Models/` directory
-2. Conform to `Codable` protocol
-3. Add to appropriate service layer
-
-### Adding New Views
-
-1. Create SwiftUI view in `Views/` directory
-2. Create corresponding ViewModel if needed
-3. Add navigation/routing in `ContentView`
-
-### Extending Services
-
-1. Add methods to appropriate service class
-2. Update ViewModels to use new functionality
-3. Update Views to expose new features
-
-## Testing
-
-The framework is structured to support:
-- Unit tests for services and ViewModels
-- UI tests for SwiftUI views
-- Integration tests for API communication
+- [Electron README](electron/README.md) - Detailed Electron app documentation
+- [TruAi Core README](TRUAI_CORE_README.md) - Governance system documentation
+- [CI Enforcement](ci/enforce-truai-policies.sh) - Policy validation script
 
 ## License
 
