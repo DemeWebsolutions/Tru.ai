@@ -171,18 +171,6 @@ function sendAIMessage() {
   // Clear input
   aiInput.value = '';
   
-function sendAIMessage() {
-  const aiInput = document.getElementById('aiInput');
-  const message = aiInput.value.trim();
-  
-  if (!message) return;
-  
-  // Add user message to chat
-  addChatMessage('user', message);
-  
-  // Clear input
-  aiInput.value = '';
-  
   // Execute through TruAi Core
   executeTruAiTask({
     type: 'ai_chat',
