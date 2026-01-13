@@ -148,7 +148,19 @@ function appendTerminalOutput(data) {
 function clearTerminal() {
   const terminalOutput = document.getElementById('terminalOutput');
   if (terminalOutput) {
-    terminalOutput.innerHTML = '<div class="terminal-line">Tru.ai Terminal v1.0.0</div><div class="terminal-line">$</div>';
+    terminalOutput.textContent = ''; // Clear content safely
+    
+    // Re-add initial lines
+    const line1 = document.createElement('div');
+    line1.className = 'terminal-line';
+    line1.textContent = 'Tru.ai Terminal v1.0.0';
+    
+    const line2 = document.createElement('div');
+    line2.className = 'terminal-line';
+    line2.textContent = '$';
+    
+    terminalOutput.appendChild(line1);
+    terminalOutput.appendChild(line2);
   }
 }
 

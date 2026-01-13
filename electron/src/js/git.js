@@ -167,7 +167,8 @@ async function handleGitCommit() {
     return;
   }
 
-  const message = prompt('Enter commit message:');
+  // Create a simple modal for commit message
+  const message = await getCommitMessage();
   if (!message) return;
 
   try {
@@ -183,6 +184,17 @@ async function handleGitCommit() {
     console.error('Failed to commit:', error);
     alert('Failed to commit: ' + error.message);
   }
+}
+
+/**
+ * Get commit message (improved UX over prompt)
+ */
+function getCommitMessage() {
+  return new Promise((resolve) => {
+    // For now, use prompt - TODO: implement proper modal dialog
+    const message = prompt('Enter commit message:');
+    resolve(message);
+  });
 }
 
 /**

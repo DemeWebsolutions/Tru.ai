@@ -312,10 +312,18 @@ function closeTab(filePath) {
   // Remove from open files
   openFiles.delete(filePath);
 
-  // Remove tab element
-  const tab = document.querySelector(`.editor-tab[data-file-path="${filePath}"]`);
-  if (tab) {
-    tab.remove();
+  // Remove tab element using data attribute matching
+  const tabs = document.querySelectorAll('.editor-tab');
+  let tabToRemove = null;
+  
+  tabs.forEach(tab => {
+    if (tab.dataset.filePath === filePath) {
+      tabToRemove = tab;
+    }
+  });
+  
+  if (tabToRemove) {
+    tabToRemove.remove();
   }
 
   // If no tabs left, clear editor

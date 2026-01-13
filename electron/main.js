@@ -304,8 +304,18 @@ ipcMain.handle('open-folder-dialog', async () => {
 });
 
 // Terminal IPC Handlers
-ipcMain.handle('create-terminal', (event, terminalId, shell = 'zsh') => {
+ipcMain.handle('create-terminal', (event, terminalId, shell) => {
   try {
+    // Detect default shell if not provided
+    if (!shell) {
+      if (process.platform === 'win32') {
+        shell = 'powershell.exe';
+      } else {
+        // Use SHELL environment variable or fallback to bash
+        shell = process.env.SHELL || 'bash';
+      }
+    }
+    
     const ptyProcess = pty.spawn(shell, [], {
       name: 'xterm-color',
       cols: 80,
