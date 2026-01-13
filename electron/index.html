@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>Tru.ai - AI-Powered IDE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo">Tru.ai</div>
+        <div class="header-nav">
+          <button class="nav-btn active" data-view="editor">Editor</button>
+          <button class="nav-btn" data-view="ai">AI Assistant</button>
+          <button class="nav-btn" data-view="terminal">Terminal</button>
+          <button class="nav-btn" data-view="settings">Settings</button>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="status-dot online"></span>
+          <span>Online</span>
+        </div>
+        <div class="app-version" id="appVersion">v1.0.0</div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Files</h3>
+          <div class="file-tree" id="fileTree">
+            <div class="file-item">
+              <span class="file-icon">📁</span>
+              <span>Project</span>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <h3>Recent</h3>
+          <div class="recent-list" id="recentList">
+            <div class="recent-item">No recent files</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Editor Area -->
+      <section class="editor-container" id="editorView">
+        <div class="editor-tabs">
+          <div class="tab active">
+            <span class="tab-name">Welcome</span>
+            <button class="tab-close">×</button>
+          </div>
+        </div>
+        <div class="editor-content">
+          <div class="welcome-screen">
+            <h1>Welcome to Tru.ai</h1>
+            <p class="subtitle">AI-Powered Development Environment</p>
+            <div class="quick-actions">
+              <button class="action-btn primary" id="newFileBtn">
+                <span class="btn-icon">📄</span>
+                <span>New File</span>
+              </button>
+              <button class="action-btn" id="openFileBtn">
+                <span class="btn-icon">📂</span>
+                <span>Open File</span>
+              </button>
+              <button class="action-btn" id="startAIBtn">
+                <span class="btn-icon">🤖</span>
+                <span>Start AI Session</span>
+              </button>
+            </div>
+            <div class="info-section">
+              <h3>Features</h3>
+              <ul>
+                <li>🚀 AI-powered code generation and completion</li>
+                <li>💡 Intelligent code suggestions</li>
+                <li>🔍 Advanced search and navigation</li>
+                <li>🎨 Customizable interface</li>
+                <li>⚡ Fast and responsive</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI Assistant Panel -->
+      <section class="ai-panel" id="aiView" style="display: none;">
+        <div class="ai-header">
+          <h2>AI Assistant</h2>
+          <button class="panel-close" id="closeAIPanel">×</button>
+        </div>
+        <div class="ai-chat" id="aiChat">
+          <div class="chat-message ai-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+              <p>Hello! I'm your Tru.ai assistant. How can I help you today?</p>
+            </div>
+          </div>
+        </div>
+        <div class="ai-input-area">
+          <textarea 
+            class="ai-input" 
+            id="aiInput" 
+            placeholder="Ask AI anything about your code..."
+            rows="3"
+          ></textarea>
+          <button class="send-btn" id="sendAIBtn">Send</button>
+        </div>
+      </section>
+
+      <!-- Terminal Panel -->
+      <section class="terminal-panel" id="terminalView" style="display: none;">
+        <div class="terminal-header">
+          <h2>Terminal</h2>
+        </div>
+        <div class="terminal-output" id="terminalOutput">
+          <div class="terminal-line">Tru.ai Terminal v1.0.0</div>
+          <div class="terminal-line">Type 'help' for available commands</div>
+          <div class="terminal-line">$</div>
+        </div>
+        <div class="terminal-input-area">
+          <span class="terminal-prompt">$</span>
+          <input type="text" class="terminal-input" id="terminalInput" placeholder="Enter command...">
+        </div>
+      </section>
+
+      <!-- Settings Panel -->
+      <section class="settings-panel" id="settingsView" style="display: none;">
+        <div class="settings-header">
+          <h2>Settings</h2>
+        </div>
+        <div class="settings-content">
+          <div class="settings-group">
+            <h3>Editor</h3>
+            <div class="setting-item">
+              <label>
+                <input type="checkbox" id="lineNumbers" checked>
+                Show Line Numbers
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>
+                <input type="checkbox" id="autoSave">
+                Auto Save
+              </label>
+            </div>
+          </div>
+          <div class="settings-group">
+            <h3>AI</h3>
+            <div class="setting-item">
+              <label for="aiModel">AI Model:</label>
+              <select id="aiModel">
+                <option value="gpt-4">GPT-4</option>
+                <option value="claude">Claude</option>
+                <option value="copilot">GitHub Copilot</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-group">
+            <h3>Theme</h3>
+            <div class="setting-item">
+              <label for="theme">Theme:</label>
+              <select id="theme">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span class="status-item">Ready</span>
+        <span class="status-item">Line 1, Col 1</span>
+      </div>
+      <div class="status-right">
+        <span class="status-item">UTF-8</span>
+        <span class="status-item">JavaScript</span>
+        <span class="status-item" id="platform">Electron</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
