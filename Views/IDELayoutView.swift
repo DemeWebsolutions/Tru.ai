@@ -95,6 +95,21 @@ struct IDELayoutView: View {
         .onAppear {
             setupKeyboardShortcuts()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleSidebar)) { _ in
+            showFileExplorer.toggle()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleTerminal)) { _ in
+            showTerminal.toggle()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .showCommandPalette)) { _ in
+            commandPaletteVM.isShowing = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .saveFile)) { _ in
+            codeEditorVM.saveCurrentFile()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .saveAllFiles)) { _ in
+            codeEditorVM.saveAllFiles()
+        }
     }
     
     private func handlePanelSelection(_ panel: ActivityPanel) {
@@ -108,10 +123,11 @@ struct IDELayoutView: View {
     }
     
     private func setupKeyboardShortcuts() {
-        // Command palette: Cmd+Shift+P
-        // File operations: Cmd+N, Cmd+O, Cmd+S
-        // Terminal toggle: Cmd+`
-        // etc.
+        #if os(iOS)
+        // iOS keyboard shortcuts can be added here
+        // For iOS 15+, consider using .keyboardShortcut modifiers
+        #endif
+        // macOS shortcuts are handled via menu commands in TruAiApp.swift
     }
 }
 
