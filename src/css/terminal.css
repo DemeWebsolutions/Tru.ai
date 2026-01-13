@@ -1,0 +1,16 @@
+/* Additional terminal-specific styles */
+.terminal-content {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+}
+
+.terminal-content .error {
+    color: #f48771;
+}
+
+.terminal-content .success {
+    color: #4ec9b0;
+}
+
+.terminal-content .warning {
+    color: #ffa500;
+}

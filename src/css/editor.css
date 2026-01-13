@@ -1,0 +1,12 @@
+/* Additional editor-specific styles */
+.monaco-editor {
+    border-radius: 0;
+}
+
+.monaco-editor .margin {
+    background-color: #1e1e1e;
+}
+
+.monaco-editor .monaco-editor-background {
+    background-color: #1e1e1e;
+}
