@@ -412,3 +412,230 @@ ipcMain.handle('git-pull', async (event, repoPath) => {
     return { success: false, error: error.message };
   }
 });
+
+// AI Chat IPC Handler
+ipcMain.handle('ai-chat', async (event, message, imageData, settings) => {
+  try {
+    // Route through TruAi Core for governance
+    const task = {
+      type: 'ai_chat',
+      scope: 'user_interaction',
+      isProduction: false,
+      data: { message, imageData, settings }
+    };
+    
+    const result = await truaiCore.executeTask(task);
+    
+    if (!result.approved) {
+      return { success: false, error: 'Request blocked by TruAi Core governance' };
+    }
+    
+    // Make API call based on provider
+    const { apiProvider, apiKey, model, temperature = 0.7, baseUrl } = settings;
+    
+    let response;
+    if (apiProvider === 'openai') {
+      response = await callOpenAI(message, imageData, apiKey, model, temperature);
+    } else if (apiProvider === 'anthropic') {
+      response = await callAnthropic(message, imageData, apiKey, model, temperature);
+    } else if (apiProvider === 'custom') {
+      response = await callCustomAPI(message, imageData, apiKey, model, temperature, baseUrl);
+    } else {
+      return { success: false, error: 'Invalid API provider' };
+    }
+    
+    // Add forensic watermark to response
+    const watermarked = truaiCore.watermarkOutput(response, result.forensicId);
+    
+    return { success: true, content: watermarked, forensicId: result.forensicId };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+async function callOpenAI(message, imageData, apiKey, model, temperature) {
+  const https = require('https');
+  const url = require('url');
+  
+  const messages = [{ role: 'user', content: message }];
+  
+  // Add image if provided and model supports vision
+  if (imageData && (model === 'gpt-4' || model.includes('vision'))) {
+    messages[0].content = [
+      { type: 'text', text: message },
+      { type: 'image_url', image_url: { url: imageData } }
+    ];
+  }
+  
+  const requestData = JSON.stringify({
+    model: model,
+    messages: messages,
+    temperature: temperature
+  });
+  
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.openai.com',
+      port: 443,
+      path: '/v1/chat/completions',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Length': Buffer.byteLength(requestData)
+      }
+    };
+    
+    const req = https.request(options, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) {
+            reject(new Error(parsed.error.message));
+          } else {
+            resolve(parsed.choices[0].message.content);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+    
+    req.on('error', (error) => {
+      reject(error);
+    });
+    
+    req.write(requestData);
+    req.end();
+  });
+}
+
+async function callAnthropic(message, imageData, apiKey, model, temperature) {
+  const https = require('https');
+  
+  const messages = [{ role: 'user', content: message }];
+  
+  // Add image if provided
+  if (imageData) {
+    const base64Data = imageData.split(',')[1];
+    const mediaType = imageData.split(';')[0].split(':')[1];
+    messages[0].content = [
+      { type: 'text', text: message },
+      { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } }
+    ];
+  }
+  
+  const requestData = JSON.stringify({
+    model: model,
+    max_tokens: 1024,
+    messages: messages,
+    temperature: temperature
+  });
+  
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.anthropic.com',
+      port: 443,
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(requestData)
+      }
+    };
+    
+    const req = https.request(options, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) {
+            reject(new Error(parsed.error.message));
+          } else {
+            resolve(parsed.content[0].text);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+    
+    req.on('error', (error) => {
+      reject(error);
+    });
+    
+    req.write(requestData);
+    req.end();
+  });
+}
+
+async function callCustomAPI(message, imageData, apiKey, model, temperature, baseUrl) {
+  // Simple custom API implementation
+  // Assumes OpenAI-compatible endpoint
+  const https = require('https');
+  const url = require('url');
+  
+  const parsedUrl = new url.URL(baseUrl);
+  const messages = [{ role: 'user', content: message }];
+  
+  const requestData = JSON.stringify({
+    model: model,
+    messages: messages,
+    temperature: temperature
+  });
+  
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || 443,
+      path: parsedUrl.pathname + '/v1/chat/completions',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Length': Buffer.byteLength(requestData)
+      }
+    };
+    
+    const req = https.request(options, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) {
+            reject(new Error(parsed.error.message));
+          } else {
+            resolve(parsed.choices[0].message.content);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+    
+    req.on('error', (error) => {
+      reject(error);
+    });
+    
+    req.write(requestData);
+    req.end();
+  });
+}

@@ -9,10 +9,11 @@
 const { ipcRenderer } = require('electron');
 
 let chatHistory = [];
+let attachedImage = null;
 
 // Auto-resize textarea
 function autoResizeTextarea() {
-    const input = document.getElementById('chat-input');
+    const input = document.getElementById('aiInput');
     if (!input) return;
     
     input.style.height = 'auto';
@@ -23,79 +24,96 @@ function autoResizeTextarea() {
 function handleChatInputKeydown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        sendChatMessage();
+        sendAIMessage();
     }
 }
 
-async function sendChatMessage() {
-    const input = document.getElementById('chat-input');
+async function sendAIMessage() {
+    const input = document.getElementById('aiInput');
     const message = input.value.trim();
     
-    if (!message) return;
+    if (!message && !attachedImage) return;
     
     // Check if API key is configured
-    if (!appState.settings.apiKey) {
-        alert('Please configure your API key in Settings (Cmd+,)');
+    const settings = JSON.parse(localStorage.getItem('truai-settings') || '{}');
+    if (!settings.apiKey) {
+        alert('Please configure your API key in Settings');
         return;
     }
     
     // Add user message to chat
-    addChatMessage('user', message);
+    addChatMessage('user', message, attachedImage);
     input.value = '';
-    autoResizeTextarea(); // Reset textarea height
+    autoResizeTextarea();
+    
+    // Clear attached image
+    const imageData = attachedImage;
+    attachedImage = null;
+    updateImagePreview();
     
     // Show loading
-    const loadingId = addChatMessage('assistant', 'Thinking...');
+    const loadingId = addChatMessage('ai', 'Thinking...');
     
     try {
-        // Prepare messages for API
-        const messages = chatHistory.map(msg => ({
-            role: msg.role === 'user' ? 'user' : 'assistant',
-            content: msg.content
-        }));
-        
-        messages.push({
-            role: 'user',
-            content: message
-        });
-        
-        // Call AI API
+        // Call AI API through TruAi Core
         const result = await ipcRenderer.invoke(
             'ai-chat',
-            messages,
-            appState.settings.apiKey,
-            appState.settings.model || 'gpt-4',
-            appState.settings.temperature || 0.7
+            message,
+            imageData,
+            settings
         );
         
         // Remove loading message
         removeChatMessage(loadingId);
         
         if (result.success) {
-            addChatMessage('assistant', result.content);
+            addChatMessage('ai', result.content);
         } else {
-            addChatMessage('assistant', 'Error: ' + result.error);
+            addChatMessage('ai', 'Error: ' + result.error);
         }
     } catch (error) {
         removeChatMessage(loadingId);
-        addChatMessage('assistant', 'Error: ' + error.message);
+        addChatMessage('ai', 'Error: ' + error.message);
     }
 }
 
-function addChatMessage(role, content) {
-    const messagesContainer = document.getElementById('chat-messages');
+function addChatMessage(role, content, imageData = null) {
+    const chatContainer = document.getElementById('aiChat');
     const messageId = `msg-${Date.now()}`;
     
     const messageDiv = document.createElement('div');
     messageDiv.id = messageId;
-    messageDiv.className = `chat-message ${role}`;
-    messageDiv.textContent = content;
+    messageDiv.className = `chat-message ${role}-message`;
     
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.textContent = role === 'user' ? '👤' : '🤖';
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    
+    if (imageData) {
+        const img = document.createElement('img');
+        img.src = imageData;
+        img.className = 'message-image';
+        img.style.maxWidth = '200px';
+        img.style.borderRadius = '8px';
+        img.style.marginBottom = '8px';
+        contentDiv.appendChild(img);
+    }
+    
+    const textP = document.createElement('p');
+    textP.textContent = content;
+    contentDiv.appendChild(textP);
+    
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(contentDiv);
+    
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
     
     // Add to history
-    chatHistory.push({ id: messageId, role, content });
+    chatHistory.push({ id: messageId, role, content, imageData });
     
     return messageId;
 }
@@ -108,94 +126,110 @@ function removeChatMessage(messageId) {
     chatHistory = chatHistory.filter(msg => msg.id !== messageId);
 }
 
-function toggleAIPanel() {
-    const overlay = document.getElementById('ai-panel-overlay');
-    if (!overlay) return;
+function handleImageAttach() {
+    const fileInput = document.getElementById('imageFileInput');
+    fileInput.click();
+}
+
+function handleImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
     
-    if (overlay.style.display === 'none' || !overlay.style.display) {
-        overlay.style.display = 'flex';
-        if (window.switchPanel) {
-            switchPanel('ai');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        attachedImage = e.target.result;
+        updateImagePreview();
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateImagePreview() {
+    let preview = document.getElementById('imagePreview');
+    
+    if (attachedImage) {
+        if (!preview) {
+            preview = document.createElement('div');
+            preview.id = 'imagePreview';
+            preview.className = 'image-preview';
+            
+            const img = document.createElement('img');
+            img.src = attachedImage;
+            img.style.maxHeight = '100px';
+            img.style.borderRadius = '4px';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '×';
+            removeBtn.className = 'remove-image-btn';
+            removeBtn.onclick = () => {
+                attachedImage = null;
+                updateImagePreview();
+            };
+            
+            preview.appendChild(img);
+            preview.appendChild(removeBtn);
+            
+            const inputArea = document.querySelector('.ai-input-area');
+            inputArea.insertBefore(preview, inputArea.firstChild);
         }
-        // Setup AI input listeners when panel is shown
-        setTimeout(() => {
-            if (window.setupAIInputListeners) {
-                setupAIInputListeners();
-            }
-        }, 100);
-    } else {
-        overlay.style.display = 'none';
+    } else if (preview) {
+        preview.remove();
+    }
+}
+
+function handleContextInsert() {
+    const input = document.getElementById('aiInput');
+    if (input) {
+        input.value += '@';
+        input.focus();
+        autoResizeTextarea();
     }
 }
 
 // Setup event listeners
-function setupAIInputListeners() {
-    const input = document.getElementById('chat-input');
+function setupAIListeners() {
+    const input = document.getElementById('aiInput');
     if (input) {
         input.addEventListener('input', autoResizeTextarea);
         input.addEventListener('keydown', handleChatInputKeydown);
     }
     
-    // Dropdown handlers
-    const agentDropdown = document.getElementById('agent-dropdown');
-    const autoDropdown = document.getElementById('auto-dropdown');
-    
-    if (agentDropdown) {
-        agentDropdown.addEventListener('click', () => {
-            // TODO: Show agent selection menu
-            console.log('Agent dropdown clicked');
-        });
+    const sendBtn = document.getElementById('sendAIBtn');
+    if (sendBtn) {
+        sendBtn.addEventListener('click', sendAIMessage);
     }
     
-    if (autoDropdown) {
-        autoDropdown.addEventListener('click', () => {
-            // TODO: Show auto mode selection menu
-            console.log('Auto dropdown clicked');
-        });
-    }
-    
-    // Action icon handlers
-    const stopBtn = document.getElementById('ai-stop-btn');
-    const contextBtn = document.getElementById('ai-context-btn');
-    const imageBtn = document.getElementById('ai-image-btn');
-    const micBtn = document.getElementById('ai-mic-btn');
-    
-    if (stopBtn) {
-        stopBtn.addEventListener('click', () => {
-            // TODO: Stop current AI operation
-            console.log('Stop clicked');
-        });
-    }
-    
-    if (contextBtn) {
-        contextBtn.addEventListener('click', () => {
-            // TODO: Show context selection (@ for files, symbols, etc.)
-            const input = document.getElementById('chat-input');
-            if (input) {
-                input.value += '@';
-                input.focus();
-                autoResizeTextarea();
-            }
-        });
-    }
-    
+    const imageBtn = document.getElementById('aiImageBtn');
     if (imageBtn) {
-        imageBtn.addEventListener('click', () => {
-            // TODO: Open image picker
-            console.log('Image attach clicked');
-        });
+        imageBtn.addEventListener('click', handleImageAttach);
     }
     
-    if (micBtn) {
-        micBtn.addEventListener('click', () => {
-            // TODO: Start voice input
-            console.log('Microphone clicked');
+    const contextBtn = document.getElementById('aiContextBtn');
+    if (contextBtn) {
+        contextBtn.addEventListener('click', handleContextInsert);
+    }
+    
+    const fileInput = document.getElementById('imageFileInput');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleImageSelect);
+    }
+    
+    const closeBtn = document.getElementById('closeAIPanel');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            document.getElementById('aiView').style.display = 'none';
+            document.getElementById('editorView').style.display = 'block';
         });
     }
 }
 
+// Initialize on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAIListeners);
+} else {
+    setupAIListeners();
+}
+
 // Export functions
-window.sendChatMessage = sendChatMessage;
-window.toggleAIPanel = toggleAIPanel;
-window.setupAIInputListeners = setupAIInputListeners;
+window.sendAIMessage = sendAIMessage;
 window.autoResizeTextarea = autoResizeTextarea;
+window.setupAIListeners = setupAIListeners;
