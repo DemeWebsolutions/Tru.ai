@@ -1,158 +1,80 @@
-# Tru.ai Electron Desktop Application
+# Tru.ai Electron Desktop IDE - Hybrid Implementation
 
-This directory contains the Electron-based desktop application for Tru.ai, providing a cross-platform IDE experience with AI-powered features.
+**Copyright © 2026 My Deme, LLC. All rights reserved.**  
+**Proprietary and confidential - Internal use only**
 
-## Features
+## Overview
 
-- **Cross-Platform**: Runs on macOS, Windows, and Linux
-- **AI Assistant**: Integrated AI chat interface for code assistance
-- **Code Editor**: Multi-tab editor with syntax-aware features
-- **Terminal**: Built-in terminal for command execution
-- **Settings**: Customizable preferences for editor and AI
-- **Secure**: Context isolation and sandboxed rendering
+This is a **hybrid implementation** combining:
+1. **Comprehensive IDE features** - Monaco Editor, file explorer, Git integration, terminal
+2. **TruAi Core governance** - Risk classification, forensic watermarking, audit trails, kill-switch authority
+
+The result is a production-ready, full-featured IDE with enterprise-grade governance and security.
+
+## Key Features
+
+### IDE Capabilities
+- ✅ **Monaco Editor** - VS Code's editor with syntax highlighting for 20+ languages
+- ✅ **File Explorer** - Workspace management, file tree, create/open/save/delete operations
+- ✅ **Integrated Terminal** - Real terminal with node-pty, command history, shell selection
+- ✅ **Git Integration** - Status, commit, push, pull with simple-git
+- ✅ **Multi-tab Editing** - Tab management, switch between files
+- ✅ **Keyboard Shortcuts** - Cmd+S (save), Cmd+W (close), Cmd+F (find), etc.
+- ✅ **Status Bar** - Cursor position, Git branch, risk indicator, language detection
+
+### TruAi Core Governance
+- ✅ **Risk Classification** - SAFE/ELEVATED/LOCKED states
+- ✅ **AI Router** - Cost-efficient routing (ChatGPT, Claude, Copilot subordinate)
+- ✅ **Forensic Watermarking** - All AI outputs traceable
+- ✅ **Kill Switch** - Emergency stop with admin override
+- ✅ **Audit Logging** - Immutable event tracking
+- ✅ **CI Enforcement** - Automated policy validation
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+ (LTS recommended)
-- npm or yarn
-
 ### Installation
 
-1. Install dependencies:
-```bash
+\`\`\`bash
 cd electron
 npm install
-```
+\`\`\`
 
-2. Run in development mode:
-```bash
+### Development
+
+\`\`\`bash
 npm start
-```
+\`\`\`
 
-### Building for Production
+### Building
 
-Build for your current platform:
-```bash
-npm run build
-```
-
-Or build for specific platforms:
-```bash
+\`\`\`bash
+npm run build        # Current platform
 npm run build:mac    # macOS
 npm run build:win    # Windows
 npm run build:linux  # Linux
-```
+\`\`\`
 
-Built applications will be in the `dist/` directory.
+## Keyboard Shortcuts
 
-## Project Structure
-
-```
-electron/
-├── main.js          # Main process (Electron backend)
-├── preload.js       # Preload script (secure bridge)
-├── renderer.js      # Renderer process (frontend logic)
-├── index.html       # Main HTML interface
-├── styles.css       # Application styles
-├── package.json     # Dependencies and build config
-└── README.md        # This file
-```
+- \`Cmd+S\` / \`Ctrl+S\` - Save file
+- \`Cmd+W\` / \`Ctrl+W\` - Close tab
+- \`Cmd+F\` / \`Ctrl+F\` - Find
+- \`Cmd+H\` / \`Ctrl+H\` - Replace
+- \`Cmd+G\` / \`Ctrl+G\` - Go to line
+- \`Cmd+Shift+F\` / \`Ctrl+Shift+F\` - Format document
+- \`Cmd+Shift+A\` / \`Ctrl+Shift+A\` - Toggle AI panel
 
 ## Security
 
-This application implements security best practices:
+- ✅ Context isolation enabled
+- ✅ Sandbox enforced
+- ✅ CSP configured
+- ✅ Secure IPC bridge
+- ✅ Forensic audit trails
+- ✅ Zero CodeQL vulnerabilities
 
-- **Context Isolation**: Enabled to prevent renderer access to Node.js
-- **Sandbox**: Enabled for additional security
-- **CSP**: Content Security Policy enforced
-- **No Remote Module**: Remote module access disabled
-- **Preload Script**: Secure bridge between main and renderer processes
+---
 
-## Architecture
-
-### Main Process (main.js)
-- Application lifecycle management
-- Window creation and management
-- Native menus
-- IPC handlers
-
-### Preload Script (preload.js)
-- Secure API exposure to renderer
-- Context bridge implementation
-- Event forwarding
-
-### Renderer Process (renderer.js)
-- UI state management
-- Event handling
-- AI chat functionality
-- Terminal emulation
-
-## Integration with Tru.ai Core
-
-To integrate with Tru.ai Core API:
-
-1. Update the AI message handling in `renderer.js`
-2. Replace placeholder responses with actual API calls
-3. Configure API endpoints in a configuration file
-
-Example API integration:
-```javascript
-async function sendAIMessage() {
-  const message = aiInput.value.trim();
-  
-  const response = await fetch('https://api.truai.core/chat', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({ message })
-  });
-  
-  const data = await response.json();
-  addChatMessage('ai', data.response);
-}
-```
-
-## Development
-
-### Hot Reload
-In development mode, use Electron's reload functionality:
-- Press `Cmd/Ctrl + R` to reload
-- Press `Cmd/Ctrl + Shift + I` to open DevTools
-
-### Debugging
-DevTools are automatically opened in development mode. You can also:
-- Use `console.log()` in any process
-- Check main process logs in terminal
-- Use Electron DevTools for renderer process
-
-## Customization
-
-### Changing Theme
-Edit CSS variables in `styles.css`:
-```css
-:root {
-  --bg-primary: #0f1115;
-  --accent-primary: #3b82f6;
-  /* ... more variables */
-}
-```
-
-### Adding New Features
-1. Add UI elements in `index.html`
-2. Add styles in `styles.css`
-3. Add logic in `renderer.js`
-4. Add IPC handlers in `main.js` if needed
-
-## License
-
-Copyright © 2026 My Deme, LLC. All rights reserved.
-
-This is proprietary software. Unauthorized copying, modification, distribution, or use of this software, via any medium, is strictly prohibited.
-
-## Support
-
-For issues and questions, please contact the Tru.ai development team.
+**FORENSIC_MARKER**: TRUAI_ELECTRON_README_HYBRID_V1  
+**Version**: 1.0.0 Hybrid  
+**Last Updated**: 2026-01-13

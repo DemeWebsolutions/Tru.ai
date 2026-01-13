@@ -645,3 +645,71 @@ body {
   font-weight: 600;
 }
 
+/* Git Panel Styles */
+.git-file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.git-file-item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.git-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.status-m {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+.status-a {
+  background-color: #10b981;
+  color: #fff;
+}
+
+.status-d {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.status-\? {
+  background-color: #6b7280;
+  color: #fff;
+}
+
+.git-no-changes {
+  padding: 12px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* Terminal Styles */
+#terminalOutput {
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.5;
+}
+
+#terminalInput {
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+}
+
+

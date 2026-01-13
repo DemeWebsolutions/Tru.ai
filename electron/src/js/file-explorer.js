@@ -44,6 +44,11 @@ async function openWorkspaceFolder() {
 
     // Load directory tree
     await loadDirectoryTree(folderPath);
+    
+    // Set Git repo path
+    if (window.gitAPI) {
+      window.gitAPI.setRepoPath(folderPath);
+    }
 
     console.log('Opened workspace:', folderPath);
   } catch (error) {

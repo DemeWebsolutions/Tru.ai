@@ -52,6 +52,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.fileExplorerAPI.initialize();
   }
   
+  // Initialize Terminal
+  if (window.terminalAPI) {
+    window.terminalAPI.initialize();
+  }
+  
+  // Initialize Git
+  if (window.gitAPI) {
+    window.gitAPI.initialize();
+  }
+  
   // Setup keyboard shortcuts
   setupKeyboardShortcuts();
 });
