@@ -1,0 +1,72 @@
+{
+  "name": "truai-electron",
+  "version": "1.1.2",
+  "description": "Tru.ai Desktop IDE - Electron Application with TruAi Core Governance",
+  "main": "main.js",
+  "copyright": "Copyright © 2026 My Deme, LLC. All rights reserved. Proprietary and confidential.",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "truai",
+    "ide",
+    "electron",
+    "desktop"
+  ],
+  "author": "My Deme, LLC - DemeWebsolutions.com",
+  "license": "Proprietary",
+  "dependencies": {
+    "monaco-editor": "^0.45.0",
+    "simple-git": "^3.20.0",
+    "node-pty": "^1.0.0",
+    "adm-zip": "^0.5.10"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.deme.truai",
+    "productName": "Tru.ai",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "core/**/*",
+      "src/**/*",
+      "assets/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "../TruAi-icon.png"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "../TruAi-icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Development",
+      "icon": "../TruAi-icon.png"
+    }
+  }
+}

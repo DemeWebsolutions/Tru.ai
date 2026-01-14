@@ -1,0 +1,60 @@
+# Electron build artifacts
+dist/
+out/
+node_modules/
+
+# NPM
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# macOS
+.DS_Store
+*.dmg
+*.app
+
+# Windows
+*.exe
+*.msi
+Thumbs.db
+
+# Linux
+*.AppImage
+*.deb
+*.rpm
+*.snap
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# Temporary files
+*.tmp
+.cache/
+tmp/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

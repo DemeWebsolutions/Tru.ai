@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSP: 'unsafe-eval' required for Monaco Editor CDN. TODO: Host Monaco locally for stricter CSP -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net;">
+  <title>Tru.ai - AI-Powered IDE</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo">Tru.ai</div>
+        <div class="header-nav">
+          <button class="nav-btn active" data-view="editor">Editor</button>
+          <button class="nav-btn" data-view="ai">AI Assistant</button>
+          <button class="nav-btn" data-view="terminal">Terminal</button>
+          <button class="nav-btn" data-view="settings">Settings</button>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="status-dot online"></span>
+          <span>Online</span>
+        </div>
+        <button class="icon-btn" id="startAIBtn" title="Start AI Assistant">🤖</button>
+        <div class="app-version" id="appVersion">v1.1.2</div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Files</h3>
+          <div class="sidebar-actions">
+            <button class="icon-btn" id="openFolderBtn" title="Open Folder">📂</button>
+            <button class="icon-btn" id="openFileBtn" title="Open File">📄</button>
+            <button class="icon-btn" id="newFileBtn" title="New File">➕</button>
+          </div>
+          <div class="file-tree" id="fileTree">
+            <div class="file-item">
+              <span class="file-icon">📁</span>
+              <span>Open a workspace folder to begin</span>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <h3>Recent</h3>
+          <div class="recent-list" id="recentList">
+            <div class="recent-item">No recent files</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Editor Area -->
+      <section class="editor-container" id="editorView">
+        <div class="editor-tabs" id="editorTabs">
+          <!-- Tabs will be dynamically added here -->
+        </div>
+        <div class="editor-content">
+          <div id="monacoEditor" style="width: 100%; height: 100%;"></div>
+        </div>
+      </section>
+
+      <!-- AI Assistant Panel -->
+      <section class="ai-panel" id="aiView" style="display: none;">
+        <div class="ai-header">
+          <h2>AI Assistant</h2>
+          <button class="panel-close" id="closeAIPanel">×</button>
+        </div>
+        <div class="ai-chat" id="aiChat">
+          <div class="chat-message ai-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+              <p>Hello! I'm your Tru.ai assistant. How can I help you today?</p>
+            </div>
+          </div>
+        </div>
+        <div class="ai-input-area">
+          <div class="ai-input-controls">
+            <button class="icon-btn-small" id="aiImageBtn" title="Attach image">📷</button>
+            <button class="icon-btn-small" id="aiFileBtn" title="Attach file(s)">📎</button>
+            <button class="icon-btn-small" id="aiZipBtn" title="Load ZIP file">📦</button>
+            <button class="icon-btn-small" id="aiContextBtn" title="Add context (@)">@</button>
+          </div>
+          <textarea 
+            class="ai-input" 
+            id="aiInput" 
+            placeholder="Ask AI anything... (Enter to send, Shift+Enter for new line)"
+            rows="3"
+          ></textarea>
+          <button class="send-btn" id="sendAIBtn">Send</button>
+        </div>
+        <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" style="display: none;">
+      </section>
+
+      <!-- Terminal Panel -->
+      <section class="terminal-panel" id="terminalView" style="display: none;">
+        <div class="terminal-header">
+          <h2>Terminal</h2>
+        </div>
+        <div class="terminal-output" id="terminalOutput">
+          <div class="terminal-line">Tru.ai Terminal v1.0.0</div>
+          <div class="terminal-line">Type 'help' for available commands</div>
+          <div class="terminal-line">$</div>
+        </div>
+        <div class="terminal-input-area">
+          <span class="terminal-prompt">$</span>
+          <input type="text" class="terminal-input" id="terminalInput" placeholder="Enter command...">
+        </div>
+      </section>
+
+      <!-- Settings Panel -->
+      <section class="settings-panel" id="settingsView" style="display: none;">
+        <div class="settings-header">
+          <h2>Settings</h2>
+        </div>
+        <div class="settings-content">
+          <div class="settings-group">
+            <h3>AI Configuration</h3>
+            <div class="setting-item">
+              <label for="aiProvider">API Provider:</label>
+              <select id="aiProvider">
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic (Claude)</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label for="apiKey">API Key:</label>
+              <input type="password" id="apiKey" placeholder="Enter your API key" class="setting-input">
+            </div>
+            <div class="setting-item">
+              <label for="aiModel">Model:</label>
+              <select id="aiModel">
+                <option value="gpt-4">GPT-4</option>
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label for="temperature">Temperature: <span id="temperatureValue">0.7</span></label>
+              <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" class="setting-slider">
+            </div>
+            <div class="setting-item" id="baseUrlSetting" style="display: none;">
+              <label for="baseUrl">Base URL:</label>
+              <input type="text" id="baseUrl" placeholder="https://api.example.com" class="setting-input">
+            </div>
+            <div class="setting-item">
+              <button class="primary-btn" id="saveSettingsBtn">Save Settings</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <h3>Editor</h3>
+            <div class="setting-item">
+              <label>
+                <input type="checkbox" id="lineNumbers" checked>
+                Show Line Numbers
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>
+                <input type="checkbox" id="autoSave">
+                Auto Save
+              </label>
+            </div>
+          </div>
+          <div class="settings-group">
+            <h3>Theme</h3>
+            <div class="setting-item">
+              <label for="theme">Theme:</label>
+              <select id="theme">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span class="status-item" id="riskIndicator">🟢 SAFE</span>
+        <span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
+        <span class="status-item" id="gitBranch">main</span>
+      </div>
+      <div class="status-right">
+        <span class="status-item">UTF-8</span>
+        <span class="status-item" id="editorLanguage">JavaScript</span>
+        <span class="status-item" id="platform">Electron</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Monaco Editor CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script>
+    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' }});
+  </script>
+
+  <!-- Application Scripts -->
+  <script src="src/js/monaco-loader.js"></script>
+  <script src="src/js/file-explorer.js"></script>
+  <script src="src/js/terminal.js"></script>
+  <script src="src/js/git.js"></script>
+  <script src="src/js/ai.js"></script>
+  <script src="src/js/agents.js"></script>
+  <script src="src/js/editor.js"></script>
+  <script src="src/js/search.js"></script>
+  <script src="src/js/settings.js"></script>
+  <script src="src/js/contents-panel.js"></script>
+  <script src="src/js/inline-ai.js"></script>
+  <script src="src/js/app.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
