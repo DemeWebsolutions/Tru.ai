@@ -45,6 +45,14 @@ struct ChatView: View {
             .navigationTitle("Tru.ai")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if let uiImage = UIImage(named: "TruAi-transparent-bg") {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 28)
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         viewModel.clearChat()

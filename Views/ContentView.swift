@@ -28,11 +28,19 @@ struct ContentView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Picker("View Mode", selection: $viewMode) {
-                        Text("IDE").tag(ViewMode.ide)
-                        Text("Chat").tag(ViewMode.chat)
+                    HStack(spacing: 8) {
+                        if let uiImage = UIImage(named: "TruAi-transparent-bg") {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 28)
+                        }
+                        Picker("View Mode", selection: $viewMode) {
+                            Text("IDE").tag(ViewMode.ide)
+                            Text("Chat").tag(ViewMode.chat)
+                        }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
                 }
             }
         }
