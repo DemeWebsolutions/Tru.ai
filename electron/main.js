@@ -413,15 +413,15 @@ ipcMain.handle('git-pull', async (event, repoPath) => {
   }
 });
 
-// AI Chat IPC Handler
-ipcMain.handle('ai-chat', async (event, message, imageData, settings) => {
+// AI Chat IPC Handler (Enhanced with comprehensive context)
+ipcMain.handle('ai-chat', async (event, message, imageData, settings, filesData = [], zipData = null, context = {}) => {
   try {
     // Route through TruAi Core for governance
     const task = {
       type: 'ai_chat',
       scope: 'user_interaction',
       isProduction: false,
-      data: { message, imageData, settings }
+      data: { message, imageData, settings, filesData, zipData, context }
     };
     
     const result = await truaiCore.executeTask(task);
@@ -430,16 +430,19 @@ ipcMain.handle('ai-chat', async (event, message, imageData, settings) => {
       return { success: false, error: 'Request blocked by TruAi Core governance' };
     }
     
+    // Build comprehensive prompt with context
+    let fullPrompt = buildPromptWithContext(message, context, filesData, zipData);
+    
     // Make API call based on provider
     const { apiProvider, apiKey, model, temperature = 0.7, baseUrl } = settings;
     
     let response;
     if (apiProvider === 'openai') {
-      response = await callOpenAI(message, imageData, apiKey, model, temperature);
+      response = await callOpenAI(fullPrompt, imageData, apiKey, model, temperature);
     } else if (apiProvider === 'anthropic') {
-      response = await callAnthropic(message, imageData, apiKey, model, temperature);
+      response = await callAnthropic(fullPrompt, imageData, apiKey, model, temperature);
     } else if (apiProvider === 'custom') {
-      response = await callCustomAPI(message, imageData, apiKey, model, temperature, baseUrl);
+      response = await callCustomAPI(fullPrompt, imageData, apiKey, model, temperature, baseUrl);
     } else {
       return { success: false, error: 'Invalid API provider' };
     }
@@ -448,6 +451,161 @@ ipcMain.handle('ai-chat', async (event, message, imageData, settings) => {
     const watermarked = truaiCore.watermarkOutput(response, result.forensicId);
     
     return { success: true, content: watermarked, forensicId: result.forensicId };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// Build comprehensive prompt with all context
+function buildPromptWithContext(message, context, filesData, zipData) {
+  let parts = [];
+  
+  // User message (highest priority)
+  parts.push(`USER REQUEST: ${message}\n`);
+  
+  // Code selection context
+  if (context.code_selection) {
+    parts.push(`\nCODE SELECTION (${context.code_selection.language}, lines ${context.code_selection.startLine}-${context.code_selection.endLine}):\n\`\`\`${context.code_selection.language}\n${context.code_selection.content}\n\`\`\`\n`);
+  } else if (context.current_file) {
+    parts.push(`\nCURRENT FILE (${context.current_file.language}):\n\`\`\`${context.current_file.language}\n${context.current_file.content}\n\`\`\`\n`);
+  }
+  
+  // Open files context
+  if (context.open_files && context.open_files.length > 0) {
+    parts.push(`\nOPEN FILES:\n${context.open_files.map(f => `- ${f.path} (${f.language})`).join('\n')}\n`);
+  }
+  
+  // Project structure
+  if (context.project_structure) {
+    parts.push(`\nPROJECT STRUCTURE:\n${JSON.stringify(context.project_structure, null, 2)}\n`);
+  }
+  
+  // Git context
+  if (context.git_context) {
+    parts.push(`\nGIT STATUS:\nBranch: ${context.git_context.branch}\nModified: ${context.git_context.modified?.length || 0} files\nStaged: ${context.git_context.staged?.length || 0} files\n`);
+  }
+  
+  // Terminal output
+  if (context.terminal_output) {
+    parts.push(`\nRECENT TERMINAL OUTPUT:\n\`\`\`\n${context.terminal_output.content}\n\`\`\`\n`);
+  }
+  
+  // Attached files (no size limit)
+  if (filesData && filesData.length > 0) {
+    parts.push(`\nATTACHED FILES (${filesData.length}):\n`);
+    filesData.forEach(file => {
+      if (file.content.encoding === 'utf-8') {
+        parts.push(`\nFile: ${file.name}\n\`\`\`\n${file.content.data}\n\`\`\`\n`);
+      } else {
+        parts.push(`\nFile: ${file.name} (binary, ${file.size} bytes)\n`);
+      }
+    });
+  }
+  
+  // ZIP contents (no size limit)
+  if (zipData) {
+    parts.push(`\nZIP CONTENTS (${zipData.fileCount} files from ${zipData.name}):\n`);
+    zipData.files.forEach(file => {
+      parts.push(`\nFile: ${file.path}\n\`\`\`\n${file.content}\n\`\`\`\n`);
+    });
+  }
+  
+  return parts.join('\n');
+}
+
+// Get project structure
+ipcMain.handle('get-project-structure', async (event, workspacePath) => {
+  try {
+    const structure = await scanProjectStructure(workspacePath);
+    return structure;
+  } catch (error) {
+    return { error: error.message };
+  }
+});
+
+async function scanProjectStructure(dirPath, maxDepth = 3, currentDepth = 0) {
+  if (currentDepth >= maxDepth) {
+    return { truncated: true };
+  }
+  
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    const structure = {
+      folders: [],
+      files: [],
+      configFiles: []
+    };
+    
+    // Config file patterns
+    const configPatterns = ['package.json', 'composer.json', 'requirements.txt', 'Gemfile', 'pom.xml', 'build.gradle', 'Cargo.toml', 'go.mod', '.env'];
+    
+    for (const entry of entries) {
+      // Skip hidden and node_modules
+      if (entry.name.startsWith('.') && entry.name !== '.env') continue;
+      if (entry.name === 'node_modules' || entry.name === 'vendor' || entry.name === 'dist' || entry.name === 'build') continue;
+      
+      const fullPath = path.join(dirPath, entry.name);
+      
+      if (entry.isDirectory()) {
+        structure.folders.push(entry.name);
+        // Recursively scan subdirectories
+        if (currentDepth < maxDepth - 1) {
+          const subStructure = await scanProjectStructure(fullPath, maxDepth, currentDepth + 1);
+          // Merge subdirectory info
+        }
+      } else {
+        structure.files.push(entry.name);
+        
+        // Check for config files
+        if (configPatterns.includes(entry.name)) {
+          try {
+            const content = await fs.readFile(fullPath, 'utf-8');
+            structure.configFiles.push({
+              name: entry.name,
+              content: content.substring(0, 5000) // Limit to 5KB
+            });
+          } catch (err) {
+            // Skip if can't read
+          }
+        }
+      }
+    }
+    
+    return structure;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+// Extract ZIP file (no size limit)
+ipcMain.handle('extract-zip', async (event, zipPath) => {
+  try {
+    const AdmZip = require('adm-zip');
+    const zip = new AdmZip(zipPath);
+    const zipEntries = zip.getEntries();
+    
+    const files = [];
+    for (const entry of zipEntries) {
+      if (!entry.isDirectory) {
+        try {
+          const content = entry.getData().toString('utf8');
+          files.push({
+            path: entry.entryName,
+            content: content,
+            size: entry.header.size
+          });
+        } catch (err) {
+          // Binary file or error, skip
+          files.push({
+            path: entry.entryName,
+            content: '[Binary file]',
+            size: entry.header.size
+          });
+        }
+      }
+    }
+    
+    return { success: true, files };
   } catch (error) {
     return { success: false, error: error.message };
   }
