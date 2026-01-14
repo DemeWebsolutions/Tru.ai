@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}╔═══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║     Tru.ai Desktop IDE - v1.0.0      ║${NC}"
+echo -e "${BLUE}║     Tru.ai Desktop IDE - v1.1.1      ║${NC}"
 echo -e "${BLUE}║   Copyright © 2026 My Deme, LLC      ║${NC}"
 echo -e "${BLUE}╚═══════════════════════════════════════╝${NC}"
 echo ""

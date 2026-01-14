@@ -6,8 +6,8 @@
  * FORENSIC_MARKER: TRUAI_AI_INTEGRATION_V1_1
  */
 
-// Use electronAPI from preload instead of require
-const ipcRenderer = window.electronAPI;
+// Use electronAPI from preload bridge
+const electronAPI = window.electronAPI;
 
 let chatHistory = [];
 let attachedImage = null;
@@ -76,7 +76,8 @@ async function sendAIMessage() {
     
     try {
         // Call AI API through TruAi Core with full context
-        const result = await ipcRenderer.invoke(
+        console.log('Sending AI request...', { message, hasImage: !!imageData, fileCount: filesData.length, hasZip: !!zipData });
+        const result = await electronAPI.invoke(
             'ai-chat',
             message,
             imageData,
@@ -85,6 +86,7 @@ async function sendAIMessage() {
             zipData,
             context
         );
+        console.log('AI response received:', result);
         
         // Remove loading message
         removeChatMessage(loadingId);
@@ -143,7 +145,7 @@ async function gatherContext() {
     // 3. Project structure (if workspace is open)
     if (window.currentWorkspace) {
         try {
-            const structure = await ipcRenderer.invoke('get-project-structure', window.currentWorkspace);
+            const structure = await electronAPI.invoke('get-project-structure', window.currentWorkspace);
             contextData.project_structure = {
                 ...structure,
                 tag: 'project_metadata'
@@ -156,7 +158,7 @@ async function gatherContext() {
     // 4. Git context (if in git repo)
     if (window.currentWorkspace) {
         try {
-            const gitStatus = await ipcRenderer.invoke('git-status', window.currentWorkspace);
+            const gitStatus = await electronAPI.invoke('git-status', window.currentWorkspace);
             if (gitStatus && gitStatus.success) {
                 contextData.git_context = {
                     branch: gitStatus.branch,
@@ -510,7 +512,7 @@ async function handleZipSelect(event) {
     
     try {
         // Send to main process for extraction (no size limit)
-        const result = await ipcRenderer.invoke('extract-zip', file.path);
+        const result = await electronAPI.invoke('extract-zip', file.path);
         
         if (result.success) {
             attachedZipContents = {
