@@ -998,3 +998,124 @@ body {
   color: var(--text-secondary);
   font-family: monospace;
 }
+
+/* Light Theme Support */
+body[data-theme="light"] {
+  background-color: #ffffff;
+  color: #24292e;
+}
+
+body[data-theme="light"] .app-header {
+  background-color: #f6f8fa;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+body[data-theme="light"] .app-logo {
+  color: #24292e;
+}
+
+body[data-theme="light"] .nav-btn {
+  color: #586069;
+}
+
+body[data-theme="light"] .nav-btn:hover {
+  background-color: #e1e4e8;
+  color: #24292e;
+}
+
+body[data-theme="light"] .nav-btn.active {
+  background-color: #ffffff;
+  color: #24292e;
+  border-bottom: 2px solid #0366d6;
+}
+
+body[data-theme="light"] .sidebar {
+  background-color: #f6f8fa;
+  border-right: 1px solid #e1e4e8;
+}
+
+body[data-theme="light"] .sidebar-section h3 {
+  color: #24292e;
+}
+
+body[data-theme="light"] .file-item {
+  color: #24292e;
+}
+
+body[data-theme="light"] .file-item:hover {
+  background-color: #e1e4e8;
+}
+
+body[data-theme="light"] .editor-container {
+  background-color: #ffffff;
+}
+
+body[data-theme="light"] .ai-panel,
+body[data-theme="light"] .terminal-panel,
+body[data-theme="light"] .settings-panel {
+  background-color: #ffffff;
+}
+
+body[data-theme="light"] .ai-header,
+body[data-theme="light"] .terminal-header,
+body[data-theme="light"] .settings-header {
+  border-bottom: 1px solid #e1e4e8;
+  background-color: #f6f8fa;
+}
+
+body[data-theme="light"] .ai-chat {
+  background-color: #f6f8fa;
+}
+
+body[data-theme="light"] .chat-message {
+  background-color: #ffffff;
+  color: #24292e;
+}
+
+body[data-theme="light"] .status-bar {
+  background-color: #f6f8fa;
+  border-top: 1px solid #e1e4e8;
+  color: #586069;
+}
+
+body[data-theme="light"] .icon-btn,
+body[data-theme="light"] .icon-btn-small {
+  color: #586069;
+}
+
+body[data-theme="light"] .icon-btn:hover,
+body[data-theme="light"] .icon-btn-small:hover {
+  background-color: #e1e4e8;
+}
+
+body[data-theme="light"] .ai-input,
+body[data-theme="light"] .terminal-input {
+  background-color: #ffffff;
+  color: #24292e;
+  border: 1px solid #e1e4e8;
+}
+
+body[data-theme="light"] .setting-input,
+body[data-theme="light"] select {
+  background-color: #ffffff;
+  color: #24292e;
+  border: 1px solid #e1e4e8;
+}
+
+body[data-theme="light"] .primary-btn {
+  background-color: #0366d6;
+  color: #ffffff;
+}
+
+body[data-theme="light"] .primary-btn:hover {
+  background-color: #0256c7;
+}
+
+body[data-theme="light"] .status-dot.offline {
+  background-color: #d73a49;
+}
+
+/* Offline indicator */
+.status-dot.offline {
+  background-color: #ef4444;
+}

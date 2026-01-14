@@ -178,17 +178,36 @@ function setupSettingsListeners() {
             document.getElementById('temperatureValue').textContent = e.target.value;
         });
     }
+    
+    // Theme switcher
+    const themeSelect = document.getElementById('theme');
+    if (themeSelect) {
+        themeSelect.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.body.setAttribute('data-theme', theme);
+            
+            // Save theme immediately
+            const settings = JSON.parse(localStorage.getItem('truai-settings') || '{}');
+            settings.theme = theme;
+            localStorage.setItem('truai-settings', JSON.stringify(settings));
+            
+            console.log('Theme changed to:', theme);
+        });
+    }
 }
 
-// Initialize
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        setupSettingsListeners();
-        loadSettings();
-    });
-} else {
+// Export settings API
+window.settingsAPI = {
+    initialize: initializeSettings,
+    loadSettings: loadSettings,
+    saveSettings: saveSettings
+};
+
+function initializeSettings() {
+    console.log('Settings initializing...');
     setupSettingsListeners();
     loadSettings();
+    console.log('Settings initialized');
 }
 
 function updateEditorSettings() {

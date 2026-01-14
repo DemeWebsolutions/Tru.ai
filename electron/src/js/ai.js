@@ -638,3 +638,15 @@ if (document.readyState === 'loading') {
 window.sendAIMessage = sendAIMessage;
 window.autoResizeTextarea = autoResizeTextarea;
 window.setupAIListeners = setupAIListeners;
+
+// Export AI API
+window.aiAPI = {
+    initialize: initializeAI,
+    sendMessage: sendAIMessage
+};
+
+function initializeAI() {
+    console.log('AI module initializing...');
+    setupAIListeners();
+    console.log('AI module initialized');
+}

@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupQuickActionListeners();
   setupAIPanelListeners();
   setupMenuListeners();
-  setupTerminalListeners();
+  setupOnlineStatusListener(); // Add online/offline detection
   
   // Initialize TruAi Core integration
   initializeTruAiCore();
@@ -46,6 +46,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log('Monaco Editor ready');
     }
   });
+  
+  // Initialize App (theme, settings)
+  if (window.appAPI) {
+    await window.appAPI.initialize();
+  }
   
   // Initialize File Explorer
   if (window.fileExplorerAPI) {
@@ -60,6 +65,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize Git
   if (window.gitAPI) {
     window.gitAPI.initialize();
+  }
+  
+  // Initialize Settings
+  if (window.settingsAPI) {
+    window.settingsAPI.initialize();
+  }
+  
+  // Initialize AI
+  if (window.aiAPI) {
+    window.aiAPI.initialize();
   }
   
   // Setup keyboard shortcuts
@@ -145,21 +160,80 @@ function switchView(viewName) {
 
 // Quick action buttons
 function setupQuickActionListeners() {
-  document.getElementById('newFileBtn').addEventListener('click', () => {
-    console.log('New file action');
-    // TODO: Implement new file functionality
-  });
+  const newFileBtn = document.getElementById('newFileBtn');
+  const openFileBtn = document.getElementById('openFileBtn');
+  const openFolderBtn = document.getElementById('openFolderBtn');
+  const startAIBtn = document.getElementById('startAIBtn');
   
-  document.getElementById('openFileBtn').addEventListener('click', () => {
-    console.log('Open file action');
-    // TODO: Implement open file functionality
-  });
+  if (newFileBtn) {
+    newFileBtn.addEventListener('click', async () => {
+      console.log('New file action');
+      if (window.fileExplorerAPI && window.fileExplorerAPI.createNewFile) {
+        window.fileExplorerAPI.createNewFile();
+      }
+    });
+  }
   
-  document.getElementById('startAIBtn').addEventListener('click', () => {
-    switchView('ai');
-    document.querySelector('[data-view="ai"]').classList.add('active');
-    document.querySelector('[data-view="editor"]').classList.remove('active');
-  });
+  if (openFileBtn) {
+    openFileBtn.addEventListener('click', async () => {
+      console.log('Open file action');
+      try {
+        const result = await window.electronAPI.invoke('open-file-dialog');
+        if (!result.canceled && result.filePaths && result.filePaths.length > 0) {
+          const filePath = result.filePaths[0];
+          const fileResult = await window.electronAPI.invoke('read-file', filePath);
+          if (fileResult.success && window.monacoAPI) {
+            window.monacoAPI.setValue(fileResult.content);
+            console.log('File opened:', filePath);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to open file:', error);
+      }
+    });
+  }
+  
+  if (openFolderBtn) {
+    openFolderBtn.addEventListener('click', () => {
+      if (window.fileExplorerAPI && window.fileExplorerAPI.openWorkspaceFolder) {
+        window.fileExplorerAPI.openWorkspaceFolder();
+      }
+    });
+  }
+  
+  if (startAIBtn) {
+    startAIBtn.addEventListener('click', () => {
+      switchView('ai');
+      document.querySelector('[data-view="ai"]').classList.add('active');
+      document.querySelector('[data-view="editor"]').classList.remove('active');
+    });
+  }
+}
+
+// Setup online/offline status listener
+function setupOnlineStatusListener() {
+  const statusIndicator = document.querySelector('.status-indicator');
+  const statusDot = document.querySelector('.status-dot');
+  const statusText = statusIndicator.querySelector('span:last-child');
+  
+  function updateOnlineStatus() {
+    if (navigator.onLine) {
+      statusDot.classList.add('online');
+      statusDot.classList.remove('offline');
+      statusText.textContent = 'Online';
+    } else {
+      statusDot.classList.remove('online');
+      statusDot.classList.add('offline');
+      statusText.textContent = 'Offline';
+    }
+  }
+  
+  // Initial status
+  updateOnlineStatus();
+  
+  // Listen for online/offline events
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
 }
 
 // AI Panel functionality
@@ -258,52 +332,44 @@ function addChatMessage(type, content) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Terminal functionality
-function setupTerminalListeners() {
-  const terminalInput = document.getElementById('terminalInput');
-  
-  terminalInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      const command = terminalInput.value.trim();
-      if (command) {
-        executeTerminalCommand(command);
-        terminalInput.value = '';
+// Menu event handlers
+function setupMenuListeners() {
+  // Listen for menu events from main process
+  if (window.electronAPI.onNewFile) {
+    window.electronAPI.onNewFile(() => {
+      console.log('New file menu clicked');
+      if (window.fileExplorerAPI && window.fileExplorerAPI.createNewFile) {
+        window.fileExplorerAPI.createNewFile();
       }
-    }
-  });
-}
-
-function executeTerminalCommand(command) {
-  const terminalOutput = document.getElementById('terminalOutput');
-  
-  // Add command to output
-  const cmdLine = document.createElement('div');
-  cmdLine.className = 'terminal-line';
-  cmdLine.textContent = `$ ${command}`;
-  terminalOutput.appendChild(cmdLine);
-  
-  // Process command
-  let response = '';
-  
-  if (command === 'help') {
-    response = 'Available commands:\n  help - Show this help\n  clear - Clear terminal\n  version - Show version';
-  } else if (command === 'clear') {
-    terminalOutput.innerHTML = '';
-    return;
-  } else if (command === 'version') {
-    response = 'Tru.ai Terminal v1.0.0';
-  } else {
-    response = `Command not found: ${command}`;
+    });
   }
   
-  // Add response to output
-  const responseLine = document.createElement('div');
-  responseLine.className = 'terminal-line';
-  responseLine.textContent = response;
-  terminalOutput.appendChild(responseLine);
+  if (window.electronAPI.onOpenFile) {
+    window.electronAPI.onOpenFile(async () => {
+      console.log('Open file menu clicked');
+      // Trigger the open file button
+      const openFileBtn = document.getElementById('openFileBtn');
+      if (openFileBtn) {
+        openFileBtn.click();
+      }
+    });
+  }
   
-  // Scroll to bottom
-  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  if (window.electronAPI.onSave) {
+    window.electronAPI.onSave(() => {
+      console.log('Save menu clicked');
+      if (window.fileExplorerAPI && window.fileExplorerAPI.saveFile) {
+        window.fileExplorerAPI.saveFile();
+      }
+    });
+  }
+  
+  if (window.electronAPI.onToggleAIPanel) {
+    window.electronAPI.onToggleAIPanel(() => {
+      switchView('ai');
+    });
+  }
+}
 }
 
 // Menu event listeners
