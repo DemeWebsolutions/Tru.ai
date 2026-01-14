@@ -3,10 +3,11 @@
  * Copyright © 2026 My Deme, LLC. All rights reserved.
  * Proprietary and confidential - Internal use only
  * 
- * FORENSIC_MARKER: TRUAI_AI_INTEGRATION_V1
+ * FORENSIC_MARKER: TRUAI_AI_INTEGRATION_V1_1
  */
 
-const { ipcRenderer } = require('electron');
+// Use electronAPI from preload instead of require
+const ipcRenderer = window.electronAPI;
 
 let chatHistory = [];
 let attachedImage = null;
@@ -40,7 +41,10 @@ async function sendAIMessage() {
     // Check if API key is configured
     const settings = JSON.parse(localStorage.getItem('truai-settings') || '{}');
     if (!settings.apiKey) {
-        alert('Please configure your API key in Settings');
+        alert('Please configure your API key in Settings first!');
+        // Switch to settings view
+        const settingsBtn = document.querySelector('[data-view="settings"]');
+        if (settingsBtn) settingsBtn.click();
         return;
     }
     
@@ -88,11 +92,13 @@ async function sendAIMessage() {
         if (result.success) {
             addChatMessage('ai', result.content);
         } else {
-            addChatMessage('ai', 'Error: ' + result.error);
+            addChatMessage('ai', 'Error: ' + (result.error || 'Unknown error occurred'));
+            console.error('AI Chat Error:', result);
         }
     } catch (error) {
         removeChatMessage(loadingId);
         addChatMessage('ai', 'Error: ' + error.message);
+        console.error('AI Chat Exception:', error);
     }
 }
 
@@ -151,7 +157,7 @@ async function gatherContext() {
     if (window.currentWorkspace) {
         try {
             const gitStatus = await ipcRenderer.invoke('git-status', window.currentWorkspace);
-            if (gitStatus.success) {
+            if (gitStatus && gitStatus.success) {
                 contextData.git_context = {
                     branch: gitStatus.branch,
                     modified: gitStatus.modified,
@@ -161,6 +167,7 @@ async function gatherContext() {
             }
         } catch (error) {
             // Not a git repo or error, skip
+            console.log('No git context available');
         }
     }
     
