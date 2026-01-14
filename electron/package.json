@@ -1,6 +1,6 @@
 {
   "name": "truai-electron",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tru.ai Desktop IDE - Electron Application with TruAi Core Governance",
   "main": "main.js",
   "copyright": "Copyright © 2026 My Deme, LLC. All rights reserved. Proprietary and confidential.",

@@ -513,6 +513,105 @@ function buildPromptWithContext(message, context, filesData, zipData) {
   return parts.join('\n');
 }
 
+// Inline AI Rewrite
+ipcMain.handle('inline-ai-rewrite', async (event, payload) => {
+  try {
+    // Route through TruAi Core
+    const result = await truaiCore.executeTask({
+      type: 'inline_rewrite',
+      scope: 'selection',
+      content: payload.selectedText,
+      context: payload.surroundingCode,
+      filePath: payload.filePath,
+      language: payload.language,
+      isProduction: false
+    });
+
+    if (!result.approved) {
+      return { success: false, error: 'Request blocked by TruAi Core governance' };
+    }
+
+    // Build prompt
+    const prompt = `Rewrite the following ${payload.language} code to improve it. Return ONLY the rewritten code, no explanations:\n\n${payload.selectedText}\n\nContext:\n${payload.surroundingCode}`;
+
+    // Get settings
+    const settings = await loadSettings();
+    const { apiProvider, apiKey, model, temperature = 0.7, baseUrl } = settings;
+
+    // Call AI
+    let response;
+    if (apiProvider === 'openai') {
+      response = await callOpenAI(prompt, null, apiKey, model, temperature);
+    } else if (apiProvider === 'anthropic') {
+      response = await callAnthropic(prompt, null, apiKey, model, temperature);
+    } else if (apiProvider === 'custom') {
+      response = await callCustomAPI(prompt, null, apiKey, model, temperature, baseUrl);
+    } else {
+      return { success: false, error: 'Invalid API provider' };
+    }
+
+    // Watermark
+    const watermarked = truaiCore.watermarkOutput(response, result.forensicId);
+
+    return {
+      success: true,
+      rewritten: watermarked,
+      forensicId: result.forensicId
+    };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// Inline AI Suggestion
+ipcMain.handle('inline-ai-suggest', async (event, payload) => {
+  try {
+    // Route through TruAi Core
+    const result = await truaiCore.executeTask({
+      type: 'inline_suggestion',
+      scope: 'cursor',
+      content: payload.context,
+      filePath: payload.filePath,
+      language: payload.language,
+      isProduction: false
+    });
+
+    if (!result.approved) {
+      return { success: false, error: 'Request blocked by TruAi Core governance' };
+    }
+
+    // Build prompt
+    const prompt = `Given this ${payload.language} code context, suggest an improvement for line ${payload.cursorLine}. Return ONLY the improved code for that line:\n\n${payload.context}`;
+
+    // Get settings
+    const settings = await loadSettings();
+    const { apiProvider, apiKey, model, temperature = 0.7, baseUrl } = settings;
+
+    // Call AI
+    let response;
+    if (apiProvider === 'openai') {
+      response = await callOpenAI(prompt, null, apiKey, model, temperature);
+    } else if (apiProvider === 'anthropic') {
+      response = await callAnthropic(prompt, null, apiKey, model, temperature);
+    } else if (apiProvider === 'custom') {
+      response = await callCustomAPI(prompt, null, apiKey, model, temperature, baseUrl);
+    } else {
+      return { success: false, error: 'Invalid API provider' };
+    }
+
+    // Watermark
+    const watermarked = truaiCore.watermarkOutput(response, result.forensicId);
+
+    return {
+      success: true,
+      suggestion: watermarked,
+      forensicId: result.forensicId
+    };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
 // Get project structure
 ipcMain.handle('get-project-structure', async (event, workspacePath) => {
   try {
