@@ -54,7 +54,7 @@ export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key-here"
 
 # Navigate to TruAi directory and start server
 cd TruAi
-php -S localhost:8080 index.php
+php -S localhost:8080 router.php
 ```
 
 ### AI Features
@@ -94,10 +94,12 @@ This will verify connectivity to OpenAI and Anthropic APIs.
 3. **Start the PHP development server**:
    ```bash
    cd TruAi
-   php -S localhost:8080 index.php
+   php -S localhost:8080 router.php
    ```
    
-   **Important:** Run the server from inside the TruAi directory.
+   **Important:** 
+   - Run from inside the TruAi directory
+   - Use `router.php` to ensure proper API routing
 
 3. **Access the application**:
    Open your browser and navigate to: `http://localhost:8080`

@@ -52,10 +52,12 @@ chmod 755 database logs
 ```bash
 # Start PHP built-in server from inside the TruAi directory
 cd TruAi
-php -S localhost:8080 index.php
+php -S localhost:8080 router.php
 ```
 
-**Important:** Always run the server from inside the `TruAi` directory, not from the parent directory.
+**Important:** 
+- Always run the server from inside the `TruAi` directory
+- Use `router.php` (not `index.php`) to ensure proper routing
 
 ### Step 6: Test AI Connection (Optional but Recommended)
 

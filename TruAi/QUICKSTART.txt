@@ -23,11 +23,11 @@ $ export OPENAI_API_KEY="sk-your-openai-key"
 $ export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key"  # Optional
 
 $ cd TruAi
-$ php -S localhost:8080 index.php
+$ php -S localhost:8080 router.php
 
 Then open: http://localhost:8080
 
-⚠️ Important: Always run the server from INSIDE the TruAi directory!
+⚠️ Important: Use router.php (not index.php) for proper API routing!
 
 🔑 DEFAULT LOGIN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
