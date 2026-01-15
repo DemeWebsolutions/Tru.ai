@@ -1,35 +1,14 @@
 /**
- * TruAi Login Page
+ * TruAi Security Acknowledgment
  * 
- * Handles login interface with legal notices (Phantom.ai style)
+ * Simplified security prompt (login removed temporarily)
  * 
  * @package TruAi
  * @version 1.0.0
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    const api = new TruAiAPI();
-    const crypto = new TruAiCrypto();
-    
-    // Check if encryption is supported
-    const encryptionSupported = TruAiCrypto.isSupported();
-    
-    if (!encryptionSupported) {
-        console.warn('Web Crypto API not supported. Using fallback authentication.');
-    }
-    
-    // Initialize encryption
-    let encryptionReady = false;
-    if (encryptionSupported) {
-        crypto.initialize().then(ready => {
-            encryptionReady = ready;
-            if (ready) {
-                console.log('🔒 Encrypted login enabled (Phantom.ai style)');
-            }
-        });
-    }
-    
-    // Render login page
+    // Render security acknowledgment
     const app = document.getElementById('app');
     app.innerHTML = `
         <div class="login-container">
@@ -40,64 +19,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="login-subtitle">Super Admin AI Platform</p>
                 </div>
 
-                <form id="loginForm" class="login-form">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input 
-                            type="text" 
-                            id="username" 
-                            name="username" 
-                            autocomplete="username"
-                            required 
-                            autofocus
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            autocomplete="current-password"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="acceptTerms" required>
-                            <span>I accept the Terms of Service and Legal Notices</span>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" id="loginBtn">
-                        Sign In
-                    </button>
-
-                    <div id="errorMessage" class="error-message hidden"></div>
-                </form>
-
-                <div class="legal-notice">
-                    <h3>Login Access Restricted</h3>
+                <div class="security-notice">
+                    <h2 style="color: var(--warning-yellow); margin-bottom: 20px;">⚠️ System Access</h2>
+                    
                     <div class="legal-content">
-                        <p><strong>⚠️ PROPRIETARY SYSTEM</strong></p>
+                        <p><strong>PROPRIETARY SYSTEM</strong></p>
                         <p>My Deme, LLC. © 2025 - 2026 All Rights Reserved.</p>
                         <p>Unauthorized access is strictly prohibited and may result in legal action.</p>
                         
-                        <p><strong>Single Admin Authorization</strong></p>
-                        <p>This system is configured for single-admin use only. All actions are logged and auditable.</p>
-                        
-                        <p><strong>AI Governance</strong></p>
-                        <p>By logging in, you acknowledge that:</p>
-                        <ul>
-                            <li>All AI interactions are governed by TruAi Core</li>
+                        <p style="margin-top: 20px;"><strong>By accessing this system, you acknowledge:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>You are the authorized system administrator</li>
+                            <li>All actions are logged and auditable</li>
+                            <li>AI interactions are governed by TruAi Core</li>
                             <li>High-risk actions require manual approval</li>
-                            <li>Production deployments are logged and traceable</li>
-                            <li>You have authority to approve system modifications</li>
+                            <li>You have full authority to approve system modifications</li>
                         </ul>
+                    </div>
 
-                        <p><strong>Data & Privacy</strong></p>
+                    <button class="btn btn-primary" id="acknowledgeBtn" style="width: 100%; margin-top: 30px; padding: 15px;">
+                        I Acknowledge and Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Handle acknowledgment
+    document.getElementById('acknowledgeBtn').addEventListener('click', function() {
+        // Set acknowledged flag in session storage
+        sessionStorage.setItem('security_acknowledged', 'true');
+        
+        // Set cookie for persistence
+        document.cookie = 'security_acknowledged=true; path=/; max-age=' + (86400 * 30);
+        
+        // Reload to show main interface
+        window.location.reload();
+    });
+});
                         <ul>
                             <li>All prompts, responses, and actions are stored locally</li>
                             <li>No data is transmitted to external parties without explicit action</li>
