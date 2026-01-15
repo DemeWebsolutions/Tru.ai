@@ -176,10 +176,62 @@ chmod 755 database
 chmod 755 logs
 ```
 
+### Problem: "Invalid credentials" error on login
+**Symptoms:** Login fails with "Invalid credentials" even with correct username/password.
+
+**Solutions:**
+
+1. **Verify database was initialized:**
+   ```bash
+   ls -la database/truai.db
+   ```
+   If file doesn't exist, the database hasn't been initialized. Start the server once to auto-create it:
+   ```bash
+   cd TruAi
+   php -S localhost:8080 router.php
+   ```
+
+2. **Check default credentials:**
+   - Username: `admin`
+   - Password: `admin123`
+   - These are case-sensitive!
+
+3. **Test database directly:**
+   ```bash
+   # Check if admin user exists
+   sqlite3 database/truai.db "SELECT username, role FROM users;"
+   ```
+   Expected output: `admin|SUPER_ADMIN`
+
+4. **Reset database (if corrupted):**
+   ```bash
+   # Backup first!
+   cp database/truai.db database/truai.db.backup
+   
+   # Delete and restart server to recreate
+   rm database/truai.db
+   php -S localhost:8080 router.php
+   ```
+
+5. **Check browser console:**
+   - Open Developer Tools (F12)
+   - Look for JavaScript errors
+   - Verify API calls are reaching the server
+   - Check if encrypted login is failing (will fallback to standard)
+
+6. **Verify server is running with router.php:**
+   ```bash
+   # CORRECT:
+   php -S localhost:8080 router.php
+   
+   # INCORRECT:
+   php -S localhost:8080 index.php  # Won't route API calls properly!
+   ```
+
 ### Problem: Port 8080 already in use
 ```bash
 # Use a different port
-php -S localhost:8081 index.php
+php -S localhost:8081 router.php
 ```
 
 ### Problem: Encryption not working
