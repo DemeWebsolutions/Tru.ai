@@ -52,7 +52,8 @@ TruAi HTML Server now includes **full AI functionality** with support for multip
 export OPENAI_API_KEY="sk-your-openai-key-here"
 export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key-here"
 
-# Start server
+# Navigate to TruAi directory and start server
+cd TruAi
 php -S localhost:8080 index.php
 ```
 
@@ -92,9 +93,11 @@ This will verify connectivity to OpenAI and Anthropic APIs.
 
 3. **Start the PHP development server**:
    ```bash
-   cd /path/to/Tru.ai/TruAi
+   cd TruAi
    php -S localhost:8080 index.php
    ```
+   
+   **Important:** Run the server from inside the TruAi directory.
 
 3. **Access the application**:
    Open your browser and navigate to: `http://localhost:8080`

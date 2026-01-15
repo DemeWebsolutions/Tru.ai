@@ -50,9 +50,12 @@ chmod 755 database logs
 ### Step 5: Start the Server
 
 ```bash
-# Start PHP built-in server
+# Start PHP built-in server from inside the TruAi directory
+cd TruAi
 php -S localhost:8080 index.php
 ```
+
+**Important:** Always run the server from inside the `TruAi` directory, not from the parent directory.
 
 ### Step 6: Test AI Connection (Optional but Recommended)
 

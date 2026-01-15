@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="login-container">
             <div class="login-box">
                 <div class="login-header">
-                    <img src="/TruAi/assets/images/TruAi-transparent-bg.png" alt="TruAi Logo" class="login-logo-img">
+                    <img src="assets/images/TruAi-transparent-bg.png" alt="TruAi Logo" class="login-logo-img">
                     <h1 class="login-title">Tru.ai</h1>
                     <p class="login-subtitle">Super Admin AI Platform</p>
                 </div>

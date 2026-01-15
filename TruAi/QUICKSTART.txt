@@ -27,6 +27,8 @@ $ php -S localhost:8080 index.php
 
 Then open: http://localhost:8080
 
+⚠️ Important: Always run the server from INSIDE the TruAi directory!
+
 🔑 DEFAULT LOGIN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Username: admin

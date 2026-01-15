@@ -42,7 +42,7 @@ if (!$auth->isAuthenticated() && $page !== 'login') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= APP_NAME ?> - HTML Server Version</title>
-    <link rel="stylesheet" href="/TruAi/assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/main.css">
     <style>
         * {
             margin: 0;
@@ -78,21 +78,21 @@ if (!$auth->isAuthenticated() && $page !== 'login') {
         window.TRUAI_CONFIG = {
             APP_NAME: '<?= APP_NAME ?>',
             APP_VERSION: '<?= APP_VERSION ?>',
-            API_BASE: window.location.origin + '/TruAi',
+            API_BASE: window.location.origin,
             CSRF_TOKEN: '<?= Auth::generateCsrfToken() ?>',
             IS_AUTHENTICATED: <?= $auth->isAuthenticated() ? 'true' : 'false' ?>,
             USERNAME: '<?= $auth->getUsername() ?? '' ?>'
         };
     </script>
     
-    <script src="/TruAi/assets/js/crypto.js"></script>
-    <script src="/TruAi/assets/js/api.js"></script>
-    <script src="/TruAi/assets/js/app.js"></script>
+    <script src="assets/js/crypto.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/app.js"></script>
     
     <?php if ($auth->isAuthenticated()): ?>
-        <script src="/TruAi/assets/js/dashboard.js"></script>
+        <script src="assets/js/dashboard.js"></script>
     <?php else: ?>
-        <script src="/TruAi/assets/js/login.js"></script>
+        <script src="assets/js/login.js"></script>
     <?php endif; ?>
 </body>
 </html>
