@@ -1,0 +1,41 @@
+# TruAi Server - Files to ignore
+
+# Database
+database/*.db
+database/*.db-journal
+database/*.db-shm
+database/*.db-wal
+database/encryption_keys.json
+
+# Logs
+logs/*.log
+logs/*.txt
+
+# PHP session files
+sessions/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+
+# Build artifacts
+node_modules/
+vendor/
+composer.lock
+package-lock.json
