@@ -79,10 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 </form>
 
                 <div class="legal-notice">
-                    <h3>Legal Notice & Terms of Service</h3>
+                    <h3>Login Access Restricted</h3>
                     <div class="legal-content">
-                        <p><strong>Proprietary System Notice</strong></p>
-                        <p>This is a proprietary AI administration system. Unauthorized access is strictly prohibited.</p>
+                        <p><strong>⚠️ PROPRIETARY SYSTEM</strong></p>
+                        <p>My Deme, LLC. © 2025 - 2026 All Rights Reserved.</p>
+                        <p>Unauthorized access is strictly prohibited and may result in legal action.</p>
                         
                         <p><strong>Single Admin Authorization</strong></p>
                         <p>This system is configured for single-admin use only. All actions are logged and auditable.</p>
@@ -126,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="legal-footer">
                             <strong>Copyright Notice</strong><br>
                             Tru.ai | TruAi Core | TruAi - Proprietary and intellectual property<br>
-                            My Deme, LLC © 2026 All rights reserved.<br>
+                            My Deme, LLC. © 2025 - 2026 All Rights Reserved.<br>
                             Developed by DemeWebsolutions.com
                         </p>
 
