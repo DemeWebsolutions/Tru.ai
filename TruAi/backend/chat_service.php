@@ -133,14 +133,17 @@ class ChatService {
     }
 
     private function getAIResponse($message, $model) {
-        // This is a placeholder. In production, integrate with actual AI APIs
-        $responses = [
-            "I understand your question about: " . substr($message, 0, 30) . "...",
-            "Based on your request, I can help you with that.",
-            "Let me analyze that for you. Here's what I found...",
-            "That's an interesting question. Let me explain..."
-        ];
+        // Call actual AI API
+        require_once __DIR__ . '/ai_client.php';
+        $aiClient = new AIClient();
         
-        return $responses[array_rand($responses)] . "\n\nThis is a simulated response using model: " . $model;
+        try {
+            $response = $aiClient->chat($message, $model);
+            return $response;
+        } catch (Exception $e) {
+            error_log('AI chat failed: ' . $e->getMessage());
+            // Fallback response if API fails
+            return "I apologize, but I'm currently unable to process your request. Please ensure your API keys are configured correctly.\n\nError: " . $e->getMessage();
+        }
     }
 }

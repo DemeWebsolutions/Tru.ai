@@ -6,6 +6,7 @@
 📦 WHAT'S INCLUDED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Complete HTML server version of Tru.ai
+✅ **FULL AI INTEGRATION** - Real OpenAI & Anthropic API connectivity
 ✅ Phantom.ai-style encrypted login (AES-256-GCM + SHA-256)
 ✅ Comprehensive legal notices and terms of service
 ✅ TruAi branding with repository logos
@@ -13,10 +14,14 @@
 ✅ TruAi Core with risk evaluation and tier routing
 ✅ SQLite database with auto-initialization
 ✅ Complete security implementation (6 layers)
-✅ Full documentation (README, SETUP, ARCHITECTURE)
+✅ Full documentation (README, SETUP, ARCHITECTURE, AI_INTEGRATION)
 
 🚀 ONE-COMMAND START
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Set your AI API keys first (required for AI functionality)
+$ export OPENAI_API_KEY="sk-your-openai-key"
+$ export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key"  # Optional
+
 $ cd TruAi
 $ php -S localhost:8080 index.php
 
@@ -63,6 +68,9 @@ Database Tables:   7
 
 🎯 KEY FEATURES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• **REAL AI Integration** - OpenAI GPT-4 & Anthropic Claude
+• **Code Generation** - Actual AI-powered code creation
+• **Intelligent Chat** - Natural language conversations
 • Encrypted Login (Phantom.ai style)
 • Legal Notices & Terms of Service
 • TruAi Core Risk Evaluation (LOW/MEDIUM/HIGH)
@@ -78,6 +86,7 @@ Database Tables:   7
 README.md                 - Complete user & developer guide
 SETUP.md                  - Installation & troubleshooting
 ARCHITECTURE.md          - Visual architecture diagrams
+AI_INTEGRATION.md        - AI setup & configuration guide
 IMPLEMENTATION_SUMMARY.md - Feature list & implementation details
 
 🧪 VERIFICATION
@@ -98,14 +107,17 @@ Authentication:
   POST /api/v1/auth/logout        - Logout
   GET  /api/v1/auth/status        - Check auth status
 
+AI Testing:
+  GET  /api/v1/ai/test            - Test AI API connectivity
+
 Tasks:
   POST /api/v1/task/create        - Create new task
   GET  /api/v1/task/{id}          - Get task details
-  POST /api/v1/task/execute       - Execute task
+  POST /api/v1/task/execute       - Execute task (calls real AI)
   POST /api/v1/task/approve       - Approve/reject task
 
 Chat:
-  POST /api/v1/chat/message       - Send message
+  POST /api/v1/chat/message       - Send message (uses real AI)
   GET  /api/v1/chat/conversations - List conversations
   GET  /api/v1/chat/conversation/{id} - Get conversation
 

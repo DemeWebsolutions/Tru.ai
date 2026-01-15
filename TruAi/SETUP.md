@@ -10,15 +10,34 @@ php --version
 
 # Check SQLite extension
 php -m | grep sqlite3
+
+# Check cURL extension (required for AI APIs)
+php -m | grep curl
 ```
 
-### Step 2: Navigate to TruAi Directory
+### Step 2: Configure AI API Keys
+
+**Required for full AI functionality:**
+
+```bash
+# OpenAI (recommended - supports GPT-3.5, GPT-4)
+export OPENAI_API_KEY="sk-your-openai-key-here"
+
+# Anthropic (optional - supports Claude models)
+export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key-here"
+```
+
+You can get API keys from:
+- OpenAI: https://platform.openai.com/api-keys
+- Anthropic: https://console.anthropic.com/
+
+### Step 3: Navigate to TruAi Directory
 
 ```bash
 cd /home/runner/work/Tru.ai/Tru.ai/TruAi
 ```
 
-### Step 3: Set Permissions
+### Step 4: Set Permissions
 
 ```bash
 # Create necessary directories
@@ -28,14 +47,38 @@ mkdir -p database logs
 chmod 755 database logs
 ```
 
-### Step 4: Start the Server
+### Step 5: Start the Server
 
 ```bash
 # Start PHP built-in server
 php -S localhost:8080 index.php
 ```
 
-### Step 5: Access the Application
+### Step 6: Test AI Connection (Optional but Recommended)
+
+```bash
+# Test AI API connectivity
+curl http://localhost:8080/api/v1/ai/test
+```
+
+Expected response:
+```json
+{
+  "success": true,
+  "results": {
+    "openai": {
+      "status": "success",
+      "message": "OpenAI API connected successfully"
+    },
+    "anthropic": {
+      "status": "success",
+      "message": "Anthropic API connected successfully"
+    }
+  }
+}
+```
+
+### Step 7: Access the Application
 
 Open your browser and navigate to:
 ```
@@ -138,6 +181,39 @@ php -S localhost:8081 index.php
 - Check browser console for errors
 - Verify Web Crypto API support (modern browsers only)
 - Fallback to standard login will occur automatically
+
+### Problem: AI not responding or returning errors
+```bash
+# Check if API keys are set
+echo $OPENAI_API_KEY
+echo $ANTHROPIC_API_KEY
+
+# Test AI connection
+curl http://localhost:8080/api/v1/ai/test
+
+# Verify cURL extension is enabled
+php -m | grep curl
+
+# Check PHP error logs
+tail -f logs/error.log
+```
+
+**Common AI API errors:**
+- "API key not configured" - Set environment variables before starting server
+- "API request failed" - Check internet connectivity and API key validity
+- "Invalid response" - API may be temporarily unavailable, try again
+
+### Problem: cURL extension not found
+```bash
+# Ubuntu/Debian:
+sudo apt install php8.2-curl
+
+# macOS (Homebrew):
+brew install php@8.2
+
+# Verify installation
+php -m | grep curl
+```
 
 ## Directory Structure
 

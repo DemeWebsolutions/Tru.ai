@@ -31,7 +31,49 @@ TruAi HTML Server Version is a self-contained web application that brings the po
 
 ## Installation
 
-### Requirements
+### AI Integration
+
+TruAi HTML Server now includes **full AI functionality** with support for multiple providers:
+
+### Supported AI Providers
+
+1. **OpenAI** (GPT-3.5, GPT-4, GPT-4 Turbo)
+   - Set environment variable: `OPENAI_API_KEY`
+   - Used for: Task execution, code generation, chat
+
+2. **Anthropic** (Claude, Claude Sonnet)
+   - Set environment variable: `ANTHROPIC_API_KEY`
+   - Used for: Advanced reasoning, long-context tasks
+
+### Configuration
+
+```bash
+# Set API keys before starting the server
+export OPENAI_API_KEY="sk-your-openai-key-here"
+export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key-here"
+
+# Start server
+php -S localhost:8080 index.php
+```
+
+### AI Features
+
+- **Real-time AI Code Generation**: Generate actual code using GPT-4 or Claude
+- **Intelligent Chat**: Natural language conversations with AI assistants
+- **Multi-tier Routing**: Automatic selection of appropriate model based on task complexity
+- **Cost Optimization**: Uses cheaper models for simple tasks, advanced models for complex ones
+- **Provider Failover**: Automatically falls back if one provider is unavailable
+
+### Testing AI Connection
+
+Test your AI integration:
+```bash
+curl http://localhost:8080/api/v1/ai/test
+```
+
+This will verify connectivity to OpenAI and Anthropic APIs.
+
+## Requirements
 
 - PHP 8.2 or higher
 - SQLite3 extension enabled
@@ -42,7 +84,13 @@ TruAi HTML Server Version is a self-contained web application that brings the po
 
 1. **Clone or copy the TruAi directory** to your web server's document root
 
-2. **Start the PHP development server**:
+2. **Configure AI API Keys** (required for full functionality):
+   ```bash
+   export OPENAI_API_KEY="sk-your-openai-key-here"
+   export ANTHROPIC_API_KEY="sk-ant-your-anthropic-key-here"  # Optional
+   ```
+
+3. **Start the PHP development server**:
    ```bash
    cd /path/to/Tru.ai/TruAi
    php -S localhost:8080 index.php

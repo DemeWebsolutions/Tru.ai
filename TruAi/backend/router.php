@@ -35,6 +35,9 @@ class Router {
         $this->routes['GET']['/api/v1/chat/conversation/{id}'] = [$this, 'handleGetConversation'];
         
         $this->routes['GET']['/api/v1/audit/logs'] = [$this, 'handleGetAuditLogs'];
+        
+        // AI test endpoint
+        $this->routes['GET']['/api/v1/ai/test'] = [$this, 'handleTestAI'];
     }
 
     public function dispatch() {
@@ -66,7 +69,8 @@ class Router {
                 // Check authentication for protected routes
                 if ($route !== '/api/v1/auth/login' && 
                     $route !== '/api/v1/auth/status' &&
-                    $route !== '/api/v1/auth/publickey') {
+                    $route !== '/api/v1/auth/publickey' &&
+                    $route !== '/api/v1/ai/test') {
                     if (!$this->auth->isAuthenticated()) {
                         http_response_code(401);
                         echo json_encode(['error' => 'Unauthorized']);
@@ -244,5 +248,24 @@ class Router {
         );
         
         echo json_encode(['logs' => $logs]);
+    }
+
+    private function handleTestAI() {
+        require_once __DIR__ . '/ai_client.php';
+        $aiClient = new AIClient();
+        
+        try {
+            $results = $aiClient->testConnection();
+            echo json_encode([
+                'success' => true,
+                'results' => $results
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }

@@ -201,13 +201,20 @@ class TruAiService {
     }
 
     private function simulateAIExecution($prompt, $model) {
-        // This is a placeholder. In production, integrate with actual AI APIs
-        return "// AI-generated code based on: " . substr($prompt, 0, 50) . "...\n" .
-               "// Model: " . $model . "\n" .
-               "function generatedCode() {\n" .
-               "    // Implementation here\n" .
-               "    return 'AI response';\n" .
-               "}\n";
+        // Call actual AI API
+        require_once __DIR__ . '/ai_client.php';
+        $aiClient = new AIClient();
+        
+        try {
+            $response = $aiClient->generateCode($prompt, $model);
+            return $response;
+        } catch (Exception $e) {
+            error_log('AI execution failed: ' . $e->getMessage());
+            // Fallback to simulated response if API fails
+            return "// AI execution failed. Please check API configuration.\n" .
+                   "// Error: " . $e->getMessage() . "\n" .
+                   "// Prompt: " . substr($prompt, 0, 50) . "...\n";
+        }
     }
 
     private function auditLog($userId, $event, $actor, $details) {
