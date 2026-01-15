@@ -15,8 +15,7 @@ require_once __DIR__ . '/backend/database.php';
 require_once __DIR__ . '/backend/auth.php';
 require_once __DIR__ . '/backend/router.php';
 
-// Start session
-session_start();
+// Session is started in config.php
 
 // Enforce localhost access
 Auth::enforceLocalhost();
