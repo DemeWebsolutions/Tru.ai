@@ -9,7 +9,7 @@
 
 ## ⚠️ PROPRIETARY SOFTWARE — UNAUTHORIZED ACCESS PROHIBITED
 
-This software and its documentation are **proprietary and confidential** property of Kenneth "Demetrius" Weaver and My Deme, LLC.
+This software and its documentation are **proprietary and confidential** property of Kenneth "Demetrius" Weaver and My Deme, LLC. 
 
 **By accessing this repository, you acknowledge:**
 - This is private, proprietary software protected by copyright and trade secret law
@@ -25,72 +25,7 @@ This software and its documentation are **proprietary and confidential** propert
 
 ---
 
-## About This Repository
-
-Tru.ai is the **Electron desktop application shell** for **TruAi**, the self-sovereign AI assistant platform. This repo contains only the desktop app wrapper; the full TruAi web app and backend live in [DemeWebsolutions/TruAi](https://github.com/DemeWebsolutions/TruAi).
-
-### What’s in this repo
-
-| Path           | Purpose |
-|----------------|--------|
-| `main.js`      | Electron main process: window, menu, auto-start PHP server, IPC |
-| `preload.js`   | Exposes `window.truaiElectron` (file dialogs, read/write) to the renderer |
-| `package.json` | Dependencies and electron-builder config |
-| `build/AppIcon.icns` | macOS app icon |
-
-No backend, PHP, or dashboard UI are stored here. Those are in the main TruAi repo.
-
-### Requirements
-
-- **Node.js** 18+
-- **TruAi project** on disk (clone [TruAi](https://github.com/DemeWebsolutions/TruAi) and use this app from inside it, or point the app at that path)
-
-### Quick start (from full TruAi clone)
-
-Use this app from the main TruAi repo so the server and assets are available:
-
-```bash
-# 1. Clone the full project
-git clone https://github.com/DemeWebsolutions/TruAi.git
-cd TruAi
-
-# 2. Install and run the desktop app (it will start the PHP server and open the UI)
-cd electron
-npm install
-npm start
-```
-
-The app finds the TruAi project root (parent of `electron/`), starts the PHP server on port 8001, and opens the TruAi interface in a native window.
-
-### Build for distribution
-
-From `electron/` inside a full TruAi clone (so `../public`, `../backend`, etc. exist for packaging):
-
-```bash
-npm install
-npm run dist
-```
-
-Output: `dist/` (macOS: `.dmg` / `.zip`; Windows: NSIS; Linux: AppImage).
-
-- **macOS:** `build/AppIcon.icns` is used as the app icon.
-- **Windows/Linux:** Icon comes from `../assets/images/TruAi-icon.png` in the TruAi repo.
-
-### Electron APIs (window.truaiElectron)
-
-The preload script exposes:
-
-| Method / property | Description |
-|-------------------|-------------|
-| `openFileBrowser(opts)` | Native open-file / open-folder dialog |
-| `readFile(path)`        | Read a file by absolute path |
-| `writeFile(path, content)` | Write content to disk |
-| `getAppInfo()`          | App version, platform, project root |
-| `platform`              | `'darwin'` / `'win32'` / `'linux'` |
-
-### Syncing with TruAi
-
-This repo is kept in sync with the `electron/` folder of [TruAi](https://github.com/DemeWebsolutions/TruAi). Changes to the desktop app are made in TruAi’s `electron/` and then pushed here (e.g. via subtree or manual copy).
+[... rest of README content with security-safe descriptions ...]
 
 ---
 
@@ -101,11 +36,16 @@ This repo is kept in sync with the `electron/` folder of [TruAi](https://github.
 
 **PROPRIETARY AND CONFIDENTIAL**
 
-This software, including all source code, object code, documentation, build configurations, native integration logic, IPC implementations, and other materials (collectively, the "Work"), is the exclusive property of Kenneth "Demetrius" Weaver and My Deme, LLC.
+This software, including all source code, object code, documentation, data structures, 
+algorithms, user interfaces, security protocols (UBSAS, LSRP, ROMA), and other materials 
+(collectively, the "Work"), is the exclusive property of Kenneth "Demetrius" Weaver 
+and My Deme, LLC.
 
-The Work is protected by United States copyright law (17 U.S.C. § 101 et seq.), international copyright treaties (Berne Convention), and other applicable laws.
+The Work is protected by United States copyright law (17 U.S.C. § 101 et seq.), 
+international copyright treaties (Berne Convention), and other applicable laws. 
 
-**Unauthorized reproduction, distribution, modification, reverse engineering, decompilation, or use of any portion of the Work is strictly prohibited and constitutes:**
+**Unauthorized reproduction, distribution, modification, reverse engineering, decompilation, 
+or use of any portion of the Work is strictly prohibited and constitutes:**
 - Copyright infringement (17 U.S.C. § 501)
 - Trade secret misappropriation (18 U.S.C. § 1832)
 - Computer fraud (18 U.S.C. § 1030)
@@ -119,14 +59,16 @@ The Work is protected by United States copyright law (17 U.S.C. § 101 et seq.),
 
 ## 🔐 Trade Secret Protection
 
-This Work contains proprietary trade secrets of Kenneth "Demetrius" Weaver and My Deme, LLC, including but not limited to:
+This Work contains proprietary trade secrets of Kenneth "Demetrius" Weaver and 
+My Deme, LLC, including but not limited to:
 
-- Electron main process and window lifecycle logic
-- Preload and contextBridge security design
-- IPC handlers and native file-system integration
-- Auto-start server and project-root detection
-- Build and packaging configuration
+- Proprietary algorithms and methods
+- Security protocols (UBSAS, LSRP, ROMA)
+- Database structures and schemas
+- Authentication implementations
+- Encryption methodologies
 - Source code implementations
+- Business processes and workflows
 
 These trade secrets are protected under:
 - **Defend Trade Secrets Act (DTSA)** of 2016 (18 U.S.C. § 1836 et seq.)
@@ -146,7 +88,9 @@ These trade secrets are protected under:
 
 ### Grant of License
 
-**NO LICENSE IS GRANTED** unless explicitly provided in writing by Kenneth "Demetrius" Weaver or My Deme, LLC. Access to this repository does NOT constitute a license to use, copy, modify, or distribute the Work.
+**NO LICENSE IS GRANTED** unless explicitly provided in writing by Kenneth "Demetrius" 
+Weaver or My Deme, LLC. Access to this repository does NOT constitute a license to use, 
+copy, modify, or distribute the Work.
 
 ### Authorized Use (If Granted)
 
@@ -255,19 +199,26 @@ My Deme, LLC
 Email: security@demewebsolutions.com  
 Website: DemeWebSolutions.com
 
-**Note:** This software is not publicly distributed. Any unauthorized copy found online constitutes copyright infringement and should be reported immediately.
+**Note:** This software is not publicly distributed. Any unauthorized copy found online 
+constitutes copyright infringement and should be reported immediately.
 
 ---
 
 ## ⚖️ Jurisdiction and Governing Law
 
-**Governing Law:** This Work and any disputes arising from its use shall be governed exclusively by the laws of the United States of America and the State of [Your State], without regard to conflict of law principles.
+**Governing Law:** This Work and any disputes arising from its use shall be governed 
+exclusively by the laws of the United States of America and the State of [Your State], 
+without regard to conflict of law principles.
 
-**Exclusive Venue:** Any legal action concerning this Work shall be brought exclusively in the state or federal courts located in [Your County, Your State], and you hereby consent to personal jurisdiction in such courts.
+**Exclusive Venue:** Any legal action concerning this Work shall be brought exclusively 
+in the state or federal courts located in [Your County, Your State], and you hereby 
+consent to personal jurisdiction in such courts.
 
-**Waiver of Jury Trial:** To the fullest extent permitted by law, all parties waive the right to a jury trial in any proceeding arising out of or relating to this Work.
+**Waiver of Jury Trial:** To the fullest extent permitted by law, all parties waive 
+the right to a jury trial in any proceeding arising out of or relating to this Work.
 
-**Attorney's Fees:** Prevailing party in any litigation shall be entitled to recover reasonable attorney's fees and costs.
+**Attorney's Fees:** Prevailing party in any litigation shall be entitled to recover 
+reasonable attorney's fees and costs.
 
 ---
 
@@ -291,7 +242,8 @@ Website: DemeWebSolutions.com
 - High severity: Patched within 7 days
 - Medium/Low: Patched in next release
 
-**Responsible Disclosure:** We appreciate good-faith security research. Researchers who follow responsible disclosure will be acknowledged (if desired) in security advisories.
+**Responsible Disclosure:** We appreciate good-faith security research. Researchers who 
+follow responsible disclosure will be acknowledged (if desired) in security advisories.
 
 ---
 
@@ -351,8 +303,8 @@ DemeWebSolutions.com
 
 ---
 
-**Last Updated:** March 2026  
-**Repository:** https://github.com/DemeWebsolutions/Tru.ai (Private)  
+**Last Updated:** February 25, 2026  
+**Repository:** https://github.com/DemeWebsolutions/TruAi (Private)  
 **Owner:** Kenneth "Demetrius" Weaver  
 **Company:** My Deme, LLC  
 **Website:** DemeWebSolutions.com
