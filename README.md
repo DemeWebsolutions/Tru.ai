@@ -304,7 +304,7 @@ DemeWebSolutions.com
 ---
 
 **Last Updated:** February 25, 2026  
-**Repository:** https://github.com/DemeWebsolutions/TruAi (Private)  
+**Repository:** https://github.com/DemeWebsolutions/Tru.ai (Private)  
 **Owner:** Kenneth "Demetrius" Weaver  
 **Company:** My Deme, LLC  
 **Website:** DemeWebSolutions.com
